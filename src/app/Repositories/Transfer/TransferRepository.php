@@ -2,8 +2,8 @@
 
 namespace App\Repositories\Transfer;
 
-use App\Models\User;
 use App\Models\Transfer;
+use App\Models\User;
 
 class TransferRepository implements TransferRepositoryInterface
 {
@@ -13,7 +13,7 @@ class TransferRepository implements TransferRepositoryInterface
      * This method retrieves a user by their ID. If no user is found, it returns null.
      *
      * @param int $id
-     * @return \App\Models\User|null
+     * @return User|null
      */
     public function findUserById(int $id): ?User
     {
@@ -38,7 +38,7 @@ class TransferRepository implements TransferRepositoryInterface
      *
      * This method saves the user model to reflect any changes in their balance.
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @return void
      */
     public function updateUserBalance(User $user): void

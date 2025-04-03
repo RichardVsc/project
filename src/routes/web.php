@@ -8,7 +8,6 @@ use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-
 Route::get('/', function () {
     return redirect()->route('home.show');
 })->name('');
@@ -20,6 +19,7 @@ Route::post('/login', [LoginController::class, 'login'])->name('login');
 
 Route::post('/logout', function () {
     Auth::logout();
+
     return redirect()->route('login');
 })->name('logout');
 

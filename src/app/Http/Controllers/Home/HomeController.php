@@ -26,7 +26,7 @@ class HomeController extends Controller
 
         if ($user->user_type === 'common') {
             return view('home.common', ['user' => $user]);
-        } else if ($user->user_type === 'merchant') {
+        } elseif ($user->user_type === 'merchant') {
             return view('home.merchant', ['user' => $user]);
         }
 

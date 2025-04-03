@@ -2,12 +2,12 @@
 
 namespace App\Services\Transfer;
 
-use App\Models\User;
 use App\Exceptions\TransferException;
+use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
+use App\Services\Notification\NotificationService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use App\Services\Notification\NotificationService;
 
 class TransferService
 {
@@ -17,8 +17,8 @@ class TransferService
     /**
      * TransferService constructor.
      *
-     * @param \App\Services\Notification\NotificationService $notificationService
-     * @param \App\Repositories\Transfer\TransferRepositoryInterface $transferRepository
+     * @param NotificationService $notificationService
+     * @param TransferRepositoryInterface $transferRepository
      */
     public function __construct(NotificationService $notificationService, TransferRepositoryInterface $transferRepository)
     {
@@ -33,11 +33,11 @@ class TransferService
      * and creating a transfer record. It also sends a notification to the recipient
      * and handles any transaction failures with a rollback.
      *
-     * @param \App\Models\User $payer
+     * @param User $payer
      * @param int $recipientId
      * @param float $amount
      * @return void
-     * @throws \App\Exceptions\TransferException
+     * @throws TransferException
      */
     public function executeTransfer(User $payer, int $recipientId, float $amount)
     {
@@ -76,10 +76,10 @@ class TransferService
     /**
      * Check if the payer has enough balance for the transfer.
      *
-     * @param \App\Models\User $payer
+     * @param User $payer
      * @param float $amount
      * @return void
-     * @throws \App\Exceptions\TransferException
+     * @throws TransferException
      */
     private function checkBalance(User $payer, float $amount)
     {
@@ -95,7 +95,7 @@ class TransferService
      * If not authorized or if an error occurs, a TransferException is thrown.
      *
      * @return void
-     * @throws \App\Exceptions\TransferException
+     * @throws TransferException
      */
     private function authorizeTransaction()
     {

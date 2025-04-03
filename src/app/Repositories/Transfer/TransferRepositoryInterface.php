@@ -12,7 +12,7 @@ interface TransferRepositoryInterface
      * This method should retrieve a user by their ID. If no user is found, it should return null.
      *
      * @param int $id
-     * @return \App\Models\User|null
+     * @return User|null
      */
     public function findUserById(int $id): ?User;
 
@@ -31,7 +31,7 @@ interface TransferRepositoryInterface
      *
      * This method should save the user model to reflect any changes in their balance.
      *
-     * @param \App\Models\User $user
+     * @param User $user
      * @return void
      */
     public function updateUserBalance(User $user): void;
