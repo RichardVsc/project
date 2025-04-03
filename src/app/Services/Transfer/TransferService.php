@@ -8,7 +8,6 @@ use App\Repositories\Transfer\TransferRepositoryInterface;
 use App\Services\Authorization\AuthorizationService;
 use App\Services\Notification\NotificationService;
 use Illuminate\Database\DatabaseManager;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class TransferService
@@ -100,10 +99,10 @@ class TransferService
         $connection->beginTransaction();
 
         try {
-            $payer->balance -= $amount;
+            $payer->balance -= (int) $amount;
             $this->transferRepository->updateUserBalance($payer);
 
-            $recipient->balance += $amount;
+            $recipient->balance += (int) $amount;
             $this->transferRepository->updateUserBalance($recipient);
 
             $this->transferRepository->createTransfer([
