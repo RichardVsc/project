@@ -2,6 +2,10 @@ name: CI Pipeline
 
 on: [push, pull_request]
 
+defaults:
+  run:
+    working-directory: ./src
+
 jobs:
   analyze:
     runs-on: ubuntu-latest
