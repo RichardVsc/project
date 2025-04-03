@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('payer')->constrained('users')->onDelete('cascade');
             $table->foreignId('payee')->constrained('users')->onDelete('cascade');
-            $table->decimal('value', 10, 2);
+            $table->bigInteger('value');
             $table->timestamps();
         });
     }

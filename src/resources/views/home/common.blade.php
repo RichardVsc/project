@@ -179,6 +179,42 @@
                 transform: rotate(360deg);
             }
         }
+
+        .statement-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .statement-button:hover {
+            background-color: #45a049;
+        }
+
+        .statement-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .statement-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .statement-item p {
+            margin: 2px 0;
+        }
+
+        .statement-empty {
+            color: #666;
+        }
     </style>
 </head>
 
@@ -218,6 +254,7 @@
 
         <p id="balance">Saldo: R$ {{ number_format($user->balance / 100, 2, ',', '.') }}</p>
         <button class="transfer-button" id="transferButton">Efetuar Transferência</button>
+        <button class="statement-button" id="statementButton">Visualizar Extrato</button>
     </div>
 
     <div id="transferModal" class="modal">
@@ -237,6 +274,14 @@
 
                 <button type="submit" class="transfer-button">Confirmar Transferência</button>
             </form>
+        </div>
+    </div>
+
+    <div id="statementModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Extrato de Transferências</h3>
+            <div id="statementList" class="statement-list"></div>
         </div>
     </div>
 
@@ -321,6 +366,54 @@
                 }
             });
         });
+
+        $('#statementButton').on('click', function() {
+            $('#statementModal').show();
+            fetchStatement();
+        });
+
+        $('#statementModal .close').on('click', function() {
+            $('#statementModal').hide();
+        });
+
+        function fetchStatement() {
+            $('#statementList').html('<p>Carregando...</p>');
+
+            $.ajax({
+                url: "{{ route('statement.index') }}",
+                method: "GET",
+                success: function(response) {
+                    $('#statementList').empty();
+
+                    if (response.data.length === 0) {
+                        $('#statementList').append('<p class="statement-empty">Nenhuma transferência encontrada.</p>');
+                        return;
+                    }
+
+                    response.data.forEach(function(transaction) {
+                        const payer = transaction.payer_user ? transaction.payer_user.name : 'Desconhecido';
+                        const payee = transaction.payee_user ? transaction.payee_user.name : 'Desconhecido';
+                        const value = new Intl.NumberFormat('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        }).format(transaction.value / 100);
+                        const date = new Date(transaction.created_at).toLocaleString('pt-BR');
+
+                        $('#statementList').append(`
+                    <div class="statement-item">
+                        <p><strong>De:</strong> ${payer}</p>
+                        <p><strong>Para:</strong> ${payee}</p>
+                        <p><strong>Valor:</strong> ${value}</p>
+                        <p><strong>Data:</strong> ${date}</p>
+                    </div>
+                `);
+                    });
+                },
+                error: function(xhr) {
+                    $('#statementList').html('<p class="statement-empty">Erro ao carregar o extrato.</p>');
+                }
+            });
+        }
 
         function showMessage(type, message) {
             var messageBox = $('<div>').addClass(type === 'success' ? 'success-message' : 'error-message');

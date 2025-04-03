@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Home\HomeController;
+use App\Http\Controllers\Statement\StatementController;
 use App\Http\Controllers\Transfer\TransferController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Auth;
@@ -30,3 +31,5 @@ Route::get('/autocomplete-users', [UserController::class, 'autocompleteUsers']);
 
 Route::post('/transfer', [TransferController::class, 'store'])->name('transfer.store')
     ->middleware('transfer.lock');
+
+Route::get('/statement', [StatementController::class, 'index'])->name('statement.index');

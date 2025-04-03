@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\Statement\StatementRepository;
+use App\Repositories\Statement\StatementRepositoryInterface;
 use App\Repositories\Transfer\TransferRepository;
 use App\Repositories\Transfer\TransferRepositoryInterface;
 use App\Services\Authorization\AuthorizationService;
@@ -16,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(StatementRepositoryInterface::class, StatementRepository::class);
         $this->app->bind(TransferRepositoryInterface::class, TransferRepository::class);
         $this->app->bind(TransferService::class, function ($app) {
             return new TransferService($app['db'], new NotificationService(), new TransferRepository(), new AuthorizationService());

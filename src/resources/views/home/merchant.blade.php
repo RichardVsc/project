@@ -47,6 +47,80 @@
             color: #e53935;
         }
 
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .statement-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .statement-button:hover {
+            background-color: #45a049;
+        }
+
+        .statement-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .statement-item {
+            padding: 8px;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .statement-item p {
+            margin: 2px 0;
+        }
+
+        .statement-empty {
+            color: #666;
+        }
+
         .error-message {
             background-color: #f8d7da;
             color: #721c24;
@@ -80,7 +154,75 @@
         <h2>Bem-vindo, {{ $user->name }} (Lojista)</h2>
         <p>Saldo: R$ {{ number_format($user->balance / 100, 2, ',', '.') }}</p>
         <p>Lojistas não podem efetuar transferências.</p>
+        <button class="statement-button" id="statementButton">Visualizar Extrato</button>
     </div>
+
+    <div id="statementModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Extrato</h3>
+            <div id="statementList"></div>
+        </div>
+    </div>
+
+    <script>
+        const statementButton = document.getElementById('statementButton');
+        const statementModal = document.getElementById('statementModal');
+        const closeBtn = statementModal.querySelector('.close');
+
+        statementButton.addEventListener('click', function() {
+            statementModal.style.display = 'block';
+            fetchStatement();
+        });
+
+        closeBtn.addEventListener('click', function() {
+            statementModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === statementModal) {
+                statementModal.style.display = 'none';
+            }
+        });
+
+        function fetchStatement() {
+            const statementList = document.getElementById('statementList');
+            statementList.innerHTML = '<p>Carregando...</p>';
+
+            fetch("{{ route('statement.index') }}")
+                .then(response => response.json())
+                .then(data => {
+                    statementList.innerHTML = '';
+                    if (data.data.length === 0) {
+                        statementList.innerHTML = '<p>Nenhum extrato encontrado.</p>';
+                        return;
+                    }
+
+                    data.data.forEach(item => {
+                        const payer = item.payer_user ? item.payer_user.name : 'Desconhecido';
+                        const payee = item.payee_user ? item.payee_user.name : 'Desconhecido';
+                        const value = new Intl.NumberFormat('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL'
+                        }).format(item.value / 100);
+                        const date = new Date(item.created_at).toLocaleString('pt-BR');
+
+                        const statementItem = `
+                            <div class="statement-item">
+                                <p><strong>De:</strong> ${payer}</p>
+                                <p><strong>Para:</strong> ${payee}</p>
+                                <p><strong>Valor:</strong> ${value}</p>
+                                <p><strong>Data:</strong> ${date}</p>
+                            </div>
+                        `;
+                        statementList.insertAdjacentHTML('beforeend', statementItem);
+                    });
+                })
+                .catch(() => {
+                    statementList.innerHTML = '<p>Erro ao carregar o extrato.</p>';
+                });
+        }
+    </script>
 </body>
 
 </html>
