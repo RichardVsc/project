@@ -5,15 +5,18 @@ namespace App\Services\Transfer;
 use App\Exceptions\TransferException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
+use App\Services\Authorization\AuthorizationService;
 use App\Services\Notification\NotificationService;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class TransferService
 {
     protected $db;
     protected $notificationService;
     protected $transferRepository;
+    protected $authService;
 
     /**
      * TransferService constructor.
@@ -21,11 +24,12 @@ class TransferService
      * @param NotificationService $notificationService
      * @param TransferRepositoryInterface $transferRepository
      */
-    public function __construct(DatabaseManager $db, NotificationService $notificationService, TransferRepositoryInterface $transferRepository)
+    public function __construct(DatabaseManager $db, NotificationService $notificationService, TransferRepositoryInterface $transferRepository, AuthorizationService $authService)
     {
         $this->db = $db;
         $this->notificationService = $notificationService;
         $this->transferRepository = $transferRepository;
+        $this->authService = $authService;
     }
 
     /**
@@ -46,13 +50,13 @@ class TransferService
         $this->checkBalance($payer, $amount);
         $this->authorizeTransaction();
 
-        $connection = $this->db->connection(); 
+        $connection = $this->db->connection();
         $connection->beginTransaction();
         try {
             $recipient = $this->transferRepository->findUserById($recipientId);
 
             if (!$recipient) {
-                throw new TransferException('Recipient not found.', 404);
+                throw new TransferException('Destinatário da transação não encontrado.', 404);
             }
 
             $payer->balance -= $amount;
@@ -67,9 +71,16 @@ class TransferService
                 'value' => $amount,
             ]);
 
-            $this->notificationService->send($recipient->id, 'Sua transferência foi realizada com sucesso.');
-
             $connection->commit();
+
+            try {
+                $this->notificationService->send($recipient->id, 'Você recebeu uma transferência.');
+            } catch (\Exception $e) {
+                Log::error('Failed to send notification', ['error' => $e->getMessage()]);
+            }
+        } catch (TransferException $e) {
+            $connection->rollBack();
+            throw $e;
         } catch (\Exception $e) {
             $connection->rollBack();
             throw new TransferException('Erro ao processar a transferência.', 500, $e);
@@ -103,7 +114,7 @@ class TransferService
     private function authorizeTransaction()
     {
         try {
-            $response = Http::get('https://util.devi.tools/api/v2/authorize');
+            $response = $this->authService->authorize();
 
             if (!$response->json('data.authorization')) {
                 throw new TransferException('Transação não autorizada pelo serviço externo.', 502);
@@ -112,6 +123,6 @@ class TransferService
             throw $e;
         } catch (\Exception $e) {
             throw new TransferException('Erro ao consultar serviço autorizador.', 500, $e);
-        } 
+        }
     }
 }
