@@ -8,8 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transfer extends Model
 {
+    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'payer',
         'payee',

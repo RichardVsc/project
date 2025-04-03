@@ -11,11 +11,25 @@ use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
+    /**
+     * Show the registration form.
+     *
+     * @return \Illuminate\View\View
+     */
     public function showRegisterForm()
     {
         return view('auth.register');
     }
 
+    /**
+     * Handle a new user registration.
+     *
+     * Validates the registration form data, creates a new user, and redirects
+     * the user to the login page upon successful registration.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -17,18 +17,33 @@ class SendNotificationJob implements ShouldQueue
     protected $userId;
     protected $message;
 
+    /**
+     * Create a new job instance.
+     *
+     * @param int $userId
+     * @param string $message
+     */
     public function __construct(int $userId, string $message)
     {
         $this->userId = $userId;
         $this->message = $message;
     }
 
+    /**
+     * Execute the job to send a notification.
+     *
+     * This method creates a notification attempt in the database, sends the
+     * notification via an external API, and updates the notification status
+     * based on whether the API call was successful or not.
+     *
+     * @return void
+     */
     public function handle()
     {
         $attempt = Notification::create([
             'user_id' => $this->userId,
             'message' => $this->message,
-            'status' => 'failed', 
+            'status' => 'failed',
         ]);
 
         $url = 'https://util.devi.tools/api/v1/notify';
@@ -51,9 +66,17 @@ class SendNotificationJob implements ShouldQueue
             $attempt->save();
         }
     }
-    
+
+    /**
+     * Determine the maximum time the job should be retried.
+     *
+     * This method defines the maximum time the job can run before being failed.
+     * In this case, it will retry for up to 3 minutes.
+     *
+     * @return \Carbon\Carbon
+     */
     public function retryUntil()
     {
-        return now()->addMinutes(3); 
+        return now()->addMinutes(3);
     }
 }
