@@ -6,11 +6,12 @@ use App\Exceptions\TransferException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
 use App\Services\Notification\NotificationService;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Facades\Http;
 
 class TransferService
 {
+    protected $db;
     protected $notificationService;
     protected $transferRepository;
 
@@ -20,8 +21,9 @@ class TransferService
      * @param NotificationService $notificationService
      * @param TransferRepositoryInterface $transferRepository
      */
-    public function __construct(NotificationService $notificationService, TransferRepositoryInterface $transferRepository)
+    public function __construct(DatabaseManager $db, NotificationService $notificationService, TransferRepositoryInterface $transferRepository)
     {
+        $this->db = $db;
         $this->notificationService = $notificationService;
         $this->transferRepository = $transferRepository;
     }
@@ -44,7 +46,8 @@ class TransferService
         $this->checkBalance($payer, $amount);
         $this->authorizeTransaction();
 
-        DB::beginTransaction();
+        $connection = $this->db->connection(); 
+        $connection->beginTransaction();
         try {
             $recipient = $this->transferRepository->findUserById($recipientId);
 
@@ -66,9 +69,9 @@ class TransferService
 
             $this->notificationService->send($recipient->id, 'Sua transferência foi realizada com sucesso.');
 
-            DB::commit();
+            $connection->commit();
         } catch (\Exception $e) {
-            DB::rollBack();
+            $connection->rollBack();
             throw new TransferException('Erro ao processar a transferência.', 500, $e);
         }
     }
@@ -105,8 +108,10 @@ class TransferService
             if (!$response->json('data.authorization')) {
                 throw new TransferException('Transação não autorizada pelo serviço externo.', 502);
             }
+        } catch (TransferException $e) {
+            throw $e;
         } catch (\Exception $e) {
             throw new TransferException('Erro ao consultar serviço autorizador.', 500, $e);
-        }
+        } 
     }
 }
