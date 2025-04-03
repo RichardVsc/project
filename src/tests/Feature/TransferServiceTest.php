@@ -10,9 +10,7 @@ use App\Services\Notification\NotificationService;
 use App\Services\Transfer\TransferService;
 use Exception;
 use Illuminate\Database\DatabaseManager;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Response;
 use Mockery;
 use Tests\TestCase;
 
@@ -117,14 +115,6 @@ class TransferServiceTest extends TestCase
             ->andReturn(new \Illuminate\Http\Client\Response(
                 new \GuzzleHttp\Psr7\Response(200, [], json_encode(['data' => ['authorization' => true]]))
             ));
-
-        $connectionMock = Mockery::mock();
-        $connectionMock->shouldReceive('beginTransaction')->once();
-        $connectionMock->shouldReceive('rollBack')->once();
-
-        $this->dbMock
-            ->shouldReceive('connection')
-            ->andReturn($connectionMock);
 
         $this->transferRepositoryMock
             ->shouldReceive('findUserById')
