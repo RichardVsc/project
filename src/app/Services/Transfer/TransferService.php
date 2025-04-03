@@ -47,17 +47,6 @@ class TransferService
      */
     public function executeTransfer(User $payer, int $recipientId, float $amount)
     {
-        $lockKey = 'user:transfer:lock:' . $payer->id;
-        $lockTime = 5;
-
-        $lock = Cache::lock($lockKey, $lockTime);
-        if (!$lock->get()) {
-            throw new TransferException(
-                'Outro processo está realizando uma transferência para este usuário. Tente novamente em instantes.',
-                429
-            );
-        }
-
         try {
             $this->checkBalance($payer, $amount);
             $this->authorizeTransaction();
@@ -69,8 +58,6 @@ class TransferService
             throw $e;
         } catch (\Exception $e) {
             throw new TransferException('Erro ao processar a transferência.', 500, $e);
-        } finally {
-            $lock->release();
         }
     }
 

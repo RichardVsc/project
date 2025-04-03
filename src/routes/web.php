@@ -28,4 +28,5 @@ Route::post('/register', [RegisterController::class, 'register'])->name('registe
 
 Route::get('/autocomplete-users', [UserController::class, 'autocompleteUsers']);
 
-Route::post('/transfer', [TransferController::class, 'store'])->name('transfer.store');
+Route::post('/transfer', [TransferController::class, 'store'])->name('transfer.store')
+    ->middleware('transfer.lock');
