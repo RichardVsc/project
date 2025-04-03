@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Log;
 
 class TransferService
 {
-    protected $db;
+    protected $database;
     protected $notificationService;
     protected $transferRepository;
     protected $authService;
@@ -24,9 +24,9 @@ class TransferService
      * @param NotificationService $notificationService
      * @param TransferRepositoryInterface $transferRepository
      */
-    public function __construct(DatabaseManager $db, NotificationService $notificationService, TransferRepositoryInterface $transferRepository, AuthorizationService $authService)
+    public function __construct(DatabaseManager $database, NotificationService $notificationService, TransferRepositoryInterface $transferRepository, AuthorizationService $authService)
     {
-        $this->db = $db;
+        $this->database = $database;
         $this->notificationService = $notificationService;
         $this->transferRepository = $transferRepository;
         $this->authService = $authService;
@@ -50,7 +50,7 @@ class TransferService
         $this->checkBalance($payer, $amount);
         $this->authorizeTransaction();
 
-        $connection = $this->db->connection();
+        $connection = $this->database->connection();
         $connection->beginTransaction();
         try {
             $recipient = $this->transferRepository->findUserById($recipientId);

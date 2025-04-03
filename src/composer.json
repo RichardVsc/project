@@ -15,11 +15,13 @@
     "require-dev": {
         "fakerphp/faker": "^1.23",
         "friendsofphp/php-cs-fixer": "^3.75",
+        "larastan/larastan": "^3.0",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
+        "phpmd/phpmd": "^2.15",
         "phpunit/phpunit": "^11.5.3"
     },
     "autoload": {
@@ -62,6 +64,16 @@
         ],
         "test": [
             "./vendor/bin/phpunit"
+        ],
+        "phpstan": [
+            "./vendor/bin/phpstan analyse --memory-limit=2G"
+        ],
+        "phpmd": [
+            "./vendor/bin/phpmd app text phpmd.xml"
+        ],
+        "analyze": [
+            "composer phpstan",
+            "composer phpmd"
         ]
     },
     "extra": {

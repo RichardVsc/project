@@ -24,12 +24,13 @@ class HomeController extends Controller
             return redirect()->route('login.show');
         }
 
-        if ($user->user_type === 'common') {
-            return view('home.common', ['user' => $user]);
-        } elseif ($user->user_type === 'merchant') {
-            return view('home.merchant', ['user' => $user]);
+        switch ($user->user_type) {
+            case 'common':
+                return view('home.common', ['user' => $user]);
+            case 'merchant':
+                return view('home.merchant', ['user' => $user]);
+            default:
+                return redirect()->route('login.show');
         }
-
-        return redirect()->route('login.show');
     }
 }
