@@ -27,8 +27,6 @@ class StatementController extends Controller
 
     /**
      * Display a listing of the user's transaction statements.
-     *
-     * @return JsonResponse
      */
     public function index()
     {
