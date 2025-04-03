@@ -14,6 +14,7 @@ class SendNotificationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $tries = 3;
     protected int $userId;
     protected string $message;
 
@@ -57,28 +58,19 @@ class SendNotificationJob implements ShouldQueue
             if ($response->successful()) {
                 $attempt->status = 'sent';
                 $attempt->save();
-
                 return;
             }
 
-            $attempt->status = 'failed';
-            $attempt->save();
+            throw new \Exception('Falha no envio da notificação');
         } catch (\Exception $e) {
             $attempt->status = 'failed';
             $attempt->save();
+            $this->fail($e);
         }
     }
 
-    /**
-     * Determine the maximum time the job should be retried.
-     *
-     * This method defines the maximum time the job can run before being failed.
-     * In this case, it will retry for up to 3 minutes.
-     *
-     * @return \Carbon\Carbon
-     */
-    public function retryUntil()
+    public function retryAfter()
     {
-        return now()->addMinutes(3);
+        return 60;
     }
 }
