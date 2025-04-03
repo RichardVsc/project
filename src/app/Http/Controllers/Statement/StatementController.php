@@ -7,11 +7,9 @@ use App\Services\Statement\StatementService;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * Class StatementController
- * 
+ * Class StatementController.
+ *
  * Handles the retrieval of transaction statements for users.
- * 
- * @package App\Http\Controllers
  */
 class StatementController extends Controller
 {

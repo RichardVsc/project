@@ -5,11 +5,9 @@ namespace App\Repositories\Statement;
 use App\Models\Transfer;
 
 /**
- * Class StatementRepository
- * 
+ * Class StatementRepository.
+ *
  * Handles data retrieval related to user transaction statements.
- * 
- * @package App\Repositories\Statement
  */
 class StatementRepository implements StatementRepositoryInterface
 {

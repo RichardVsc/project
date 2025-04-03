@@ -3,11 +3,9 @@
 namespace App\Repositories\Statement;
 
 /**
- * Interface StatementRepositoryInterface
- * 
+ * Interface StatementRepositoryInterface.
+ *
  * Defines the contract for retrieving user transaction statements.
- * 
- * @package App\Repositories\Statement
  */
 interface StatementRepositoryInterface
 {

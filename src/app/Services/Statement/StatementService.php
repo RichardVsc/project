@@ -5,11 +5,9 @@ namespace App\Services\Statement;
 use App\Repositories\Statement\StatementRepositoryInterface;
 
 /**
- * Class StatementService
- * 
+ * Class StatementService.
+ *
  * Handles business logic related to retrieving user transaction statements.
- * 
- * @package App\Services
  */
 class StatementService
 {
