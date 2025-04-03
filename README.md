@@ -40,7 +40,7 @@ Abaixo está a arquitetura geral do sistema:
 3. Após o container executar o build corretamente, é possível acessar a aplicação.
 
 #### Projeto
-Pode ser acessado na URL: `http://localhost:8080/`
+Pode ser acessado na URL: `http://localhost:8080`
 
 4. Para acessar o projeto, é possivel a criação de usuários com o Seeder.
 
