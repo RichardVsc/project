@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use Closure;
-use Illuminate\Support\Facades\Cache;
 use App\Exceptions\TransferException;
+use Closure;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class TransferLockMiddleware
 {
@@ -13,7 +13,7 @@ class TransferLockMiddleware
     {
         $payer = Auth::user();
         $lockKey = 'user:transfer:lock:' . $payer->id;
-        
+
         $lock = Cache::lock($lockKey);
         if (!$lock->get()) {
             throw new TransferException(
@@ -21,7 +21,7 @@ class TransferLockMiddleware
                 429
             );
         }
-        
+
         try {
             return $next($request);
         } finally {
