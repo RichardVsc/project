@@ -1,0 +1,10 @@
+/vendor
+/node_modules
+/storage
+.env
+.idea
+.vscode
+docker/php/.composer
+docker/nginx/*.log
+docker/nginx/logs
+pgdata
