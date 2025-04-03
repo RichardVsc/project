@@ -11,8 +11,5 @@
 
 3. Após o container executar o build corretamente, é possível acessar a aplicação. Segue abaixo alguns acessos:
 
-#### Documentação Swagger
-http://localhost:8000/api/docs
-
-#### Mercado Software Expert
+#### Projeto
 http://localhost:8080/ (acesso via porta 80 nginx)
