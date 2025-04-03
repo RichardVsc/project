@@ -12,4 +12,4 @@
 3. Após o container executar o build corretamente, é possível acessar a aplicação. Segue abaixo alguns acessos:
 
 #### Projeto
-http://localhost:8080/ (acesso via porta 80 nginx)
+http://localhost:8080/
