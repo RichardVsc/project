@@ -13,10 +13,10 @@ use Illuminate\Support\Facades\Log;
 
 class TransferService
 {
-    protected $database;
-    protected $notificationService;
-    protected $transferRepository;
-    protected $authService;
+    protected DatabaseManager $database;
+    protected NotificationService $notificationService;
+    protected TransferRepositoryInterface $transferRepository;
+    protected AuthorizationService $authService;
 
     /**
      * TransferService constructor.

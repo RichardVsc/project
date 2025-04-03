@@ -14,8 +14,8 @@ class SendNotificationJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $userId;
-    protected $message;
+    protected int $userId;
+    protected string $message;
 
     /**
      * Create a new job instance.

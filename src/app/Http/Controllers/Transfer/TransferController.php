@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class TransferController extends Controller
 {
-    protected $transferService;
+    protected TransferService $transferService;
 
     /**
      * TransferController constructor.
