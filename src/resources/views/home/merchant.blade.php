@@ -78,7 +78,7 @@
         @endif
 
         <h2>Bem-vindo, {{ $user->name }} (Lojista)</h2>
-        <p>Saldo: R$ {{ number_format($user->balance, 2, ',', '.') }}</p>
+        <p>Saldo: R$ {{ number_format($user->balance / 100, 2, ',', '.') }}</p>
         <p>Lojistas não podem efetuar transferências.</p>
     </div>
 </body>

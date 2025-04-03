@@ -28,7 +28,7 @@ class UserSeeder extends Seeder
                 'email' => $faker->unique()->safeEmail,
                 'password' => Hash::make('12345'),
                 'user_type' => 'common',
-                'balance' => $faker->randomFloat(2, 0, 1000),
+                'balance' => $faker->numberBetween(0, 100000),
             ]);
         }
 
@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
                 'email' => $faker->unique()->companyEmail,
                 'password' => Hash::make('12345'),
                 'user_type' => 'merchant',
-                'balance' => $faker->randomFloat(2, 0, 1000),
+                'balance' => $faker->numberBetween(0, 100000),
             ]);
         }
     }

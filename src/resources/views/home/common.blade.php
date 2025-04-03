@@ -216,7 +216,7 @@
 
         <h2>Bem-vindo, {{ $user->name }}</h2>
 
-        <p id="balance">Saldo: R$ {{ number_format($user->balance, 2, ',', '.') }}</p>
+        <p id="balance">Saldo: R$ {{ number_format($user->balance / 100, 2, ',', '.') }}</p>
         <button class="transfer-button" id="transferButton">Efetuar Transferência</button>
     </div>
 
@@ -239,7 +239,7 @@
             </form>
         </div>
     </div>
-    
+
     <script>
         var modal = document.getElementById("transferModal");
         var btn = document.getElementById("transferButton");
@@ -299,8 +299,14 @@
                     $('#amount').val('');
 
                     showMessage('success', response.message);
-                    
-                    $('#balance').text('Saldo: R$ ' + response.new_balance); 
+
+                    const formattedBalance = new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
+                        minimumFractionDigits: 2
+                    }).format(response.new_balance / 100); // Divide by 100 to convert to reais
+
+                    $('#balance').text('Saldo: ' + formattedBalance);
                 },
                 error: function(xhr) {
                     $('#loadingSpinner').hide();
@@ -310,7 +316,7 @@
                     if (xhr.responseJSON && xhr.responseJSON.message) {
                         message = xhr.responseJSON.message;
                     }
-                    
+
                     showMessage('error', message);
                 }
             });

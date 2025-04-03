@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->string('password');
             $table->enum('user_type', ['common', 'merchant']);
-            $table->decimal('balance', 10, 2)->default(0.00);
+            $table->bigInteger('balance')->default(0);
             $table->timestamps();
         });
 
