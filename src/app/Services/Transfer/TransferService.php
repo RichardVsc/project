@@ -35,8 +35,8 @@ class TransferService
     /**
      * Execute a money transfer from the payer to the recipient.
      *
-     * This method handles the complete transfer process, including balance validation, 
-     * authorization, transfer execution, and notification. It also ensures that the transfer 
+     * This method handles the complete transfer process, including balance validation,
+     * authorization, transfer execution, and notification. It also ensures that the transfer
      * is performed in a thread-safe manner using a cache lock.
      *
      * @param User $payer The user initiating the transfer.
@@ -90,14 +90,15 @@ class TransferService
         if (!$recipient) {
             throw new TransferException('Destinatário da transação não encontrado.', 404);
         }
+
         return $recipient;
     }
 
     /**
      * Execute the transfer between payer and recipient.
      *
-     * This method performs a monetary transfer between two users, updating their balances 
-     * and recording the transaction. It uses a database transaction to ensure consistency 
+     * This method performs a monetary transfer between two users, updating their balances
+     * and recording the transaction. It uses a database transaction to ensure consistency
      * and rolls back in case of an error.
      *
      * @param User $payer The user initiating the transfer.
@@ -134,7 +135,7 @@ class TransferService
     /**
      * Send a notification to the recipient.
      *
-     * This method sends a notification to the specified recipient indicating 
+     * This method sends a notification to the specified recipient indicating
      * that a transfer has been received. In case of a failure, it logs the error.
      *
      * @param int $recipientId The ID of the recipient user.

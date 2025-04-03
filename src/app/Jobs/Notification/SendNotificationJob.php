@@ -57,9 +57,10 @@ class SendNotificationJob implements ShouldQueue
             if ($response->successful()) {
                 $attempt->status = 'sent';
                 $attempt->save();
+
                 return;
             }
-            
+
             $attempt->status = 'failed';
             $attempt->save();
         } catch (\Exception $e) {

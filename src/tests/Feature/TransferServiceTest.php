@@ -78,7 +78,7 @@ class TransferServiceTest extends TestCase
 
         $this->authServiceMock->shouldReceive('authorize')
             ->once()
-            ->andThrow(new \Exception('HTTP request failed'));
+            ->andThrow(new Exception('HTTP request failed'));
 
         $this->expectException(TransferException::class);
         $this->expectExceptionMessage('Erro ao consultar serviço autorizador.');
@@ -209,7 +209,7 @@ class TransferServiceTest extends TestCase
         $this->notificationServiceMock
             ->shouldReceive('send')
             ->with($recipient->id, 'Você recebeu uma transferência.')
-            ->andThrow(new \Exception('Notification service failed'));
+            ->andThrow(new Exception('Notification service failed'));
 
         Log::shouldReceive('error')
             ->once()
@@ -247,7 +247,7 @@ class TransferServiceTest extends TestCase
 
         $this->transferRepositoryMock
             ->shouldReceive('updateUserBalance')
-            ->andThrow(new \Exception('Database error during update'));
+            ->andThrow(new Exception('Database error during update'));
 
         $this->expectException(TransferException::class);
         $this->expectExceptionMessage('Erro ao processar a transferência.');
