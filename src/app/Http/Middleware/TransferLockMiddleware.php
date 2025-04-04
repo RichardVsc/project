@@ -15,14 +15,14 @@ class TransferLockMiddleware
         $lockKey = 'user:transfer:lock:' . $payer->id;
 
         $lock = Cache::lock($lockKey);
-        if (!$lock->get()) {
-            throw new TransferException(
-                'Outro processo está realizando uma transferência para este usuário. Tente novamente em instantes.',
-                429
-            );
-        }
 
         try {
+            if (!$lock->get()) {
+                throw new TransferException(
+                    'Outro processo está realizando uma transferência para este usuário. Tente novamente em instantes.',
+                    429
+                );
+            }
             return $next($request);
         } finally {
             $lock->release();
