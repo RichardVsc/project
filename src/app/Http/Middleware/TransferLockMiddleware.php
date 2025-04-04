@@ -23,6 +23,7 @@ class TransferLockMiddleware
                     429
                 );
             }
+
             return $next($request);
         } finally {
             $lock->release();
