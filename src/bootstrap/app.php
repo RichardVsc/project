@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\LogTransferRequestMiddleware;
 use App\Http\Middleware\TransferLockMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -14,7 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'transfer.lock' => TransferLockMiddleware::class,
+            'transfer.log' => LogTransferRequestMiddleware::class,
         ]);
+        
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

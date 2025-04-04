@@ -30,6 +30,6 @@ Route::post('/register', [RegisterController::class, 'register'])->name('registe
 Route::get('/autocomplete-users', [UserController::class, 'autocompleteUsers']);
 
 Route::post('/transfer', [TransferController::class, 'store'])->name('transfer.store')
-    ->middleware('transfer.lock');
+    ->middleware(['transfer.lock', 'transfer.log']);
 
 Route::get('/statement', [StatementController::class, 'index'])->name('statement.index');
