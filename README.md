@@ -17,7 +17,7 @@ Este projeto é uma plataforma de pagamentos que permite transferências de dinh
 ## 🔧 Componentes Principais
 
 1. **Request:** A requisição chega na aplicação através da rota configurada.
-2. **Logging Middleware**: Cria os logs de requisição e resposta.
+2. **Logs Middleware**: Cria os logs de requisição e resposta.
 2. **Redis Lock Middleware**: Garante que apenas uma transação por vez seja realizada para evitar concorrência.
 3. **TransferController**: Recebe a requisição, valida os dados iniciais e chama o TransferOrchestrator para gerenciar o fluxo da transferência.
 4. **TransferOrchestrator**: Orquestra o processo de transferência, coordenando as interações entre os diferentes serviços, como validação de saldo, autorização e execução da transferência.
