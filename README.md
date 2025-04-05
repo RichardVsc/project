@@ -1,11 +1,18 @@
 # Projeto de Plataforma de Pagamentos Simplificada
 
 Este projeto é uma plataforma de pagamentos que permite transferências de dinheiro entre usuários e lojistas.  
-Abaixo está a arquitetura geral do sistema:
+
+## 🧑‍💻 Tecnologias Utilizadas
+- **Laravel 12**
+- **PHP-FPM 8.2**
+- **Redis para Lock de Transações e Fila de Notificações**
+- **Docker** & **Docker Compose**
 
 ## 🏗️ Arquitetura do Sistema
 
 ![Arquitetura](docs/images/architecture.png)
+
+---
 
 ## 🔧 Componentes Principais
 
@@ -21,32 +28,93 @@ Abaixo está a arquitetura geral do sistema:
 
 ---
 
-## 🚀 Tecnologias Utilizadas
-- **Laravel 12**
-- **PHP-FPM 8.2**
-- **Redis para Lock de Transações e Fila de Notificações**
+## 🚀 Primeiros Passos
 
-## Instalação 💡
+### ✅ Pré-requisitos
 
-1. Clone este repositório para o seu ambiente de desenvolvimento e entre na pasta do projeto.
+Certifique-se de que você tem o seguinte instalado:
 
-   ```bash
-   git clone https://github.com/RichardVsc/project.git && cd project
+- **Docker**
+- **Docker Compose**
+- **Composer** (opcional)
 
-2. Execute o comando docker abaixo:
-   ```bash
-   docker-compose up -d
+### 🛠️ Instalação
 
-3. Após o container executar o build corretamente, é possível acessar a aplicação.
+1. Clone este repositório e entre na pasta do projeto:
+```bash
+git clone https://github.com/RichardVsc/project.git && cd project
+```
 
-#### Projeto
-Pode ser acessado na URL: `http://localhost:8080`
+2. Suba os containers com Docker:
+```bash
+docker-compose up -d
+```
 
-4. Para acessar o projeto, é possivel a criação de usuários com o Seeder.
+3. Acesse o container:
+```bash
+docker exec -it project bash
+```
 
-   1. Acesse o container `docker exec -it project bash`
-   2. Rode as migrations `php artisan migrate`
-   3. Rode o seeder `php artisan db:seed --class=UserSeeder`
-   4. Para verificar os usuarios, pode se usar o tinker
-         - `php artisan tinker`
-         - `App\Models\User::all();`
+4. Instale as dependências PHP via Composer:
+```bash
+composer install
+```
+
+5. Execute as migrations e os seeders:
+```bash
+php artisan migrate
+php artisan db:seed --class=UserSeeder
+```
+6. Acesse a aplicação no navegador:
+```bash
+http://localhost:8080
+```
+
+7. Para verificar os usuários criados via seeder, use o Tinker:
+```bash
+php artisan tinker
+App\Models\User::all();
+```
+
+## 🧪 Testes e Análise de Código
+
+### Rodando os Testes
+Para rodar todos os testes automatizados:
+```bash
+composer test
+```
+
+### Análise Estática de Código
+Executa todas as ferramentas de análise de uma vez:
+```bash
+composer analyze
+```
+
+Ou utilize individualmente:
+- PHPCS Fixer (formatação):
+```bash
+composer check
+```
+
+- PHPStan (análise estática):
+```bash
+composer phpstan
+```
+
+- PHPMD (más práticas):
+```bash
+composer phpmd
+```
+
+### Correção Automática
+Corrigir automaticamente os problemas de formatação:
+```bash
+composer fix
+```
+
+## 💡 Dicas
+- Se estiver com dúvidas sobre os comandos disponíveis, veja a aba "scripts" no arquivo composer.json.
+
+- A pasta vendor/ e o arquivo composer.lock não devem ser editados manualmente.
+
+- Sempre que adicionar novas dependências, lembre-se de rodar os testes e as ferramentas de análise.
