@@ -7,8 +7,6 @@ use App\Repositories\Statement\StatementRepositoryInterface;
 use App\Repositories\Transfer\TransferRepository;
 use App\Repositories\Transfer\TransferRepositoryInterface;
 use App\Services\Authorization\AuthorizationService;
-use App\Services\Notification\NotificationDispatcher;
-use App\Services\Notification\NotificationService;
 use App\Services\Transfer\BalanceValidator;
 use App\Services\Transfer\RecipientResolver;
 use App\Services\Transfer\TransferOrchestrator;
