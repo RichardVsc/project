@@ -69,5 +69,14 @@ jobs:
       - name: Run migrations
         run: php artisan migrate --force
 
-      - name: Run tests
-        run: php artisan test
+      - name: Run check
+        run: composer check
+
+      - name: Run PHPStan
+        run: composer phpstan
+
+      - name: Run PHPMD
+        run: composer phpmd
+
+      - name: Run Tests
+        run: composer test
