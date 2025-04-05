@@ -41,7 +41,6 @@ class TransferService
      * @throws AuthorizationServiceException If the third party API could not be reached.
      * @throws RecipientNotFoundException If the payee cannot be found.
      * @throws TransferProcessException If the transfer process fails.
-     * @throws TransferException If the transfer fails.
      */
     public function transfer(User $payer, int $recipientId, float $amount)
     {
@@ -55,7 +54,7 @@ class TransferService
             AuthorizationServiceException $e
         ) {
             throw $e;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             throw new TransferException('Erro ao processar a transferência.', 500, $e);
         }
     }

@@ -5,7 +5,6 @@ namespace App\Services\Transfer;
 use App\Exceptions\TransferProcessException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
-use App\Services\Notification\NotificationService;
 use Illuminate\Database\DatabaseManager;
 
 class TransferProcessor
@@ -16,7 +15,7 @@ class TransferProcessor
     /**
      * TransferService constructor.
      *
-     * @param NotificationService $notificationService
+     * @param DatabaseManager $database,
      * @param TransferRepositoryInterface $transferRepository
      */
     public function __construct(
