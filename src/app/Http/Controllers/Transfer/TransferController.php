@@ -49,7 +49,7 @@ class TransferController extends Controller
             recipientId: $recipientId,
             amount: $amount
         );
-        
+
         $this->transferService->transfer($data);
 
         $payer = User::find(Auth::id());
