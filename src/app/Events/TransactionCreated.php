@@ -19,8 +19,8 @@ class TransactionCreated
     /**
      * Create a new event instance.
      *
-     * @param int $payer
-     * @param int $recipient
+     * @param int $payerId
+     * @param int $recipientId
      * @param float $amount
      */
     public function __construct(int $payerId, int $recipientId, float $amount)

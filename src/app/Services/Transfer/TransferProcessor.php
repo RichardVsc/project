@@ -35,7 +35,7 @@ class TransferProcessor
      * and recording the transaction. It uses a database transaction to ensure consistency
      * and rolls back in case of an error.
      *
-     * @param User $payer The user initiating the transfer.
+     * @param UserData $payer The user initiating the transfer.
      * @param User $recipient The user receiving the transfer.
      * @param float $amount The amount to be transferred.
      * @return void

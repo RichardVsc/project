@@ -4,14 +4,13 @@ namespace App\Services\Transfer;
 
 use App\Data\UserData;
 use App\Exceptions\InsufficientFundsException;
-use App\Models\User;
 
 class BalanceValidator
 {
     /**
      * Check if the payer has enough balance for the transfer.
      *
-     * @param User $payer
+     * @param UserData $payer
      * @param float $amount
      * @return void
      * @throws InsufficientFundsException
