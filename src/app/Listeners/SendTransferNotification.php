@@ -23,6 +23,6 @@ class SendTransferNotification implements ShouldQueue
      */
     public function handle(TransactionCreated $event): void
     {
-        $this->notificationDispatcher->dispatch($event->recipient->id);
+        $this->notificationDispatcher->dispatch($event->recipientId);
     }
 }

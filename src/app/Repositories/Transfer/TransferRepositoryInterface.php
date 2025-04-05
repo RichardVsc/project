@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Transfer;
 
+use App\Data\UserData;
 use App\Models\User;
 
 interface TransferRepositoryInterface
@@ -35,4 +36,26 @@ interface TransferRepositoryInterface
      * @return void
      */
     public function updateUserBalance(User $user): void;
+
+    /**
+     * Retrieve the basic data of a user by their ID.
+     *
+     * This method should return a UserData DTO containing essential information,
+     * such as the user's ID and balance.
+     *
+     * @param int $id
+     * @return UserData
+     */
+    public function getUserDataById(int $id): UserData;
+
+    /**
+     * Find and lock a user by their ID for update.
+     *
+     * This method should return a User model instance locked for update,
+     * used to safely perform operations such as balance modifications during a transaction.
+     *
+     * @param int $id
+     * @return User
+     */
+    public function findAndLockUserById(int $id): User;
 }

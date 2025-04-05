@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Transfer;
 
+use App\Data\UserData;
 use App\Models\Transfer;
 use App\Models\User;
 
@@ -44,5 +45,39 @@ class TransferRepository implements TransferRepositoryInterface
     public function updateUserBalance(User $user): void
     {
         $user->save();
+    }
+
+    /**
+     * Retrieve user data by ID.
+     *
+     * This method fetches a user by their ID and returns a simplified data object (UserData)
+     * containing only essential information such as ID and balance.
+     *
+     * @param int $id The ID of the user to retrieve.
+     * @return UserData The user data transfer object.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If the user is not found.
+     */
+    public function getUserDataById(int $id): UserData
+    {
+        $user = User::findOrFail($id);
+        return new UserData($user->id, $user->balance);
+    }
+
+    /**
+     * Find and lock a user by ID for update.
+     *
+     * This method retrieves a user record by its ID and applies a database-level
+     * lock (FOR UPDATE) to prevent race conditions during critical operations,
+     * such as balance updates during transfers.
+     *
+     * @param int $id The ID of the user to lock.
+     * @return User The locked user model instance.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If the user is not found.
+     */
+    public function findAndLockUserById(int $id): User
+    {
+        return User::where('id', $id)->lockForUpdate()->firstOrFail();
     }
 }

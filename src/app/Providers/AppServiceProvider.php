@@ -29,7 +29,8 @@ class AppServiceProvider extends ServiceProvider
                     new AuthorizationService(),
                     new BalanceValidator(),
                     new TransferProcessor($app['db'], $app->make(TransferRepositoryInterface::class)),
-                    new RecipientResolver($app->make(TransferRepositoryInterface::class))
+                    new RecipientResolver($app->make(TransferRepositoryInterface::class)),
+                    $app->make(TransferRepositoryInterface::class)
                 )
             );
         });

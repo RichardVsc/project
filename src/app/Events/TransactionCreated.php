@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Data\UserData;
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -13,21 +14,21 @@ class TransactionCreated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public User $payer;
-    public User $recipient;
+    public int $payerId;
+    public int $recipientId;
     public float $amount;
 
     /**
      * Create a new event instance.
      *
-     * @param User $payer
-     * @param User $recipient
+     * @param int $payer
+     * @param int $recipient
      * @param float $amount
      */
-    public function __construct(User $payer, User $recipient, float $amount)
+    public function __construct(int $payerId, int $recipientId, float $amount)
     {
-        $this->payer = $payer;
-        $this->recipient = $recipient;
+        $this->payerId = $payerId;
+        $this->recipientId = $recipientId;
         $this->amount = $amount;
     }
 

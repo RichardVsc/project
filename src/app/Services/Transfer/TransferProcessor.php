@@ -2,6 +2,8 @@
 
 namespace App\Services\Transfer;
 
+use App\Data\UserData;
+use App\Exceptions\InsufficientFundsException;
 use App\Exceptions\TransferProcessException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
@@ -37,14 +39,22 @@ class TransferProcessor
      * @param User $recipient The user receiving the transfer.
      * @param float $amount The amount to be transferred.
      * @return void
+     * @throws InsufficientFundsException If the user doesnt have enough funds.
      * @throws TransferProcessException If the transfer fails.
      */
-    public function process(User $payer, User $recipient, float $amount): void
+    public function process(UserData $payer, User $recipient, float $amount): void
     {
         $connection = $this->database->connection();
         $connection->beginTransaction();
 
         try {
+            $payer = $this->transferRepository->findAndLockUserById($payer->id);
+            $recipient = $this->transferRepository->findAndLockUserById($recipient->id);
+
+            if ($payer->balance < $amount) {
+                throw new InsufficientFundsException("Saldo insuficiente.");
+            }
+
             $payer->balance -= (int) $amount;
             $this->transferRepository->updateUserBalance($payer);
 
@@ -58,6 +68,9 @@ class TransferProcessor
             ]);
 
             $connection->commit();
+        } catch (InsufficientFundsException $e) {
+            $connection->rollBack();
+            throw $e;
         } catch (\Exception $e) {
             $connection->rollBack();
             throw new TransferProcessException('Erro ao processar a transferência.', 500, $e);

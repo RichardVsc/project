@@ -4,6 +4,7 @@ namespace App\Services\Transfer;
 
 use App\Data\TransferRequestData;
 use App\Events\TransactionCreated;
+use App\Repositories\Transfer\TransferRepositoryInterface;
 use App\Services\Authorization\AuthorizationService;
 
 class TransferOrchestrator
@@ -12,6 +13,7 @@ class TransferOrchestrator
     protected BalanceValidator $balanceValidator;
     protected TransferProcessor $transferProcessor;
     protected RecipientResolver $recipientResolver;
+    protected TransferRepositoryInterface $transferRepository;
 
     /**
      * TransferService constructor.
@@ -26,11 +28,13 @@ class TransferOrchestrator
         BalanceValidator $balanceValidator,
         TransferProcessor $transferProcessor,
         RecipientResolver $recipientResolver,
+        TransferRepositoryInterface $transferRepository,
     ) {
         $this->authService = $authService;
         $this->balanceValidator = $balanceValidator;
         $this->transferProcessor = $transferProcessor;
         $this->recipientResolver = $recipientResolver;
+        $this->transferRepository = $transferRepository;
     }
 
     /**
@@ -53,12 +57,12 @@ class TransferOrchestrator
      */
     public function orchestrate(TransferRequestData $data): void
     {
-        $payer = $this->recipientResolver->resolve($data->payerId);
+        $payer = $this->transferRepository->getUserDataById($data->payerId);
         $recipient = $this->recipientResolver->resolve($data->recipientId);
 
         $this->balanceValidator->validate($payer, $data->amount);
         $this->authService->ensureAuthorized();
         $this->transferProcessor->process($payer, $recipient, $data->amount);
-        event(new TransactionCreated($payer, $recipient, $data->amount));
+        event(new TransactionCreated($payer->id, $recipient->id, $data->amount));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Transfer;
 
+use App\Data\UserData;
 use App\Exceptions\InsufficientFundsException;
 use App\Models\User;
 
@@ -15,7 +16,7 @@ class BalanceValidator
      * @return void
      * @throws InsufficientFundsException
      */
-    public function validate(User $payer, float $amount)
+    public function validate(UserData $payer, float $amount)
     {
         if ($payer->balance < $amount) {
             throw new InsufficientFundsException('Saldo insuficiente para realizar a transferência.', 400);
