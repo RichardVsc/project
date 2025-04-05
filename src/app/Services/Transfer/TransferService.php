@@ -33,9 +33,7 @@ class TransferService
      * authorization, transfer execution, and notification. It also ensures that the transfer
      * is performed in a thread-safe manner using a cache lock.
      *
-     * @param User $payer The user initiating the transfer.
-     * @param int $recipientId The ID of the recipient user.
-     * @param float $amount The amount to be transferred.
+     * @param TransferRequestData $data.
      * @return void
      * @throws InsufficientFundsException If the user has insufficient funds.
      * @throws AuthorizationDeniedException If the third party API doesnt authorize the request.

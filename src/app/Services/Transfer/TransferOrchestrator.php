@@ -4,7 +4,6 @@ namespace App\Services\Transfer;
 
 use App\Data\TransferRequestData;
 use App\Events\TransactionCreated;
-use App\Models\User;
 use App\Services\Authorization\AuthorizationService;
 
 class TransferOrchestrator
@@ -42,9 +41,7 @@ class TransferOrchestrator
      *
      * Exceptions thrown during any step will propagate to the caller.
      *
-     * @param User $payer The user initiating the transfer.
-     * @param int $recipientId The ID of the recipient user.
-     * @param float $amount The amount to be transferred.
+     * @param TransferRequestData $data.
      *
      * @return void
      *
