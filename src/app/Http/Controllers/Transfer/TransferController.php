@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Transfer;
 
+use App\Data\TransferRequestData;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Services\Transfer\TransferService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,7 +44,16 @@ class TransferController extends Controller
         $recipientId = $validated['recipient_id'];
         $amount = (int) round($validated['amount'] * 100);
 
-        $this->transferService->transfer($payer, $recipientId, $amount);
+        $data = new TransferRequestData(
+            payerId: $payer->id,
+            recipientId: $recipientId,
+            amount: $amount
+        );
+        
+        $this->transferService->transfer($data);
+
+        $payer = User::find(Auth::id());
+        $payer = $payer->fresh();
 
         return response()->json([
             'status' => 'success',

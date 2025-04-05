@@ -2,6 +2,7 @@
 
 namespace App\Services\Transfer;
 
+use App\Data\TransferRequestData;
 use App\Exceptions\AuthorizationDeniedException;
 use App\Exceptions\AuthorizationServiceException;
 use App\Exceptions\InsufficientFundsException;
@@ -42,10 +43,10 @@ class TransferService
      * @throws RecipientNotFoundException If the payee cannot be found.
      * @throws TransferProcessException If the transfer process fails.
      */
-    public function transfer(User $payer, int $recipientId, float $amount)
+    public function transfer(TransferRequestData $data): void
     {
         try {
-            $this->transferOrchestrator->orchestrate($payer, $recipientId, $amount);
+            $this->transferOrchestrator->orchestrate($data);
         } catch (
             InsufficientFundsException |
             RecipientNotFoundException |

@@ -2,6 +2,7 @@
 
 namespace App\Services\Transfer;
 
+use App\Data\TransferRequestData;
 use App\Events\TransactionCreated;
 use App\Models\User;
 use App\Services\Authorization\AuthorizationService;
@@ -53,12 +54,14 @@ class TransferOrchestrator
      * @throws \App\Exceptions\RecipientNotFoundException
      * @throws \App\Exceptions\TransferProcessException
      */
-    public function orchestrate(User $payer, int $recipientId, float $amount)
+    public function orchestrate(TransferRequestData $data): void
     {
-        $this->balanceValidator->validate($payer, $amount);
+        $payer = $this->recipientResolver->resolve($data->payerId);
+        $recipient = $this->recipientResolver->resolve($data->recipientId);
+
+        $this->balanceValidator->validate($payer, $data->amount);
         $this->authService->ensureAuthorized();
-        $recipient = $this->recipientResolver->resolve($recipientId);
-        $this->transferProcessor->process($payer, $recipient, $amount);
-        event(new TransactionCreated($payer, $recipient, $amount));
+        $this->transferProcessor->process($payer, $recipient, $data->amount);
+        event(new TransactionCreated($payer, $recipient, $data->amount));
     }
 }
