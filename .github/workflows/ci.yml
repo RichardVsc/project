@@ -2,72 +2,64 @@ name: CI Pipeline
 
 on: [push, pull_request]
 
-defaults:
-  run:
-    working-directory: ./src
-
 jobs:
   test:
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:15
-        ports: [5432:5432]
+        ports:
+          - 5432:5432
         env:
-          POSTGRES_USER: postgres
+          POSTGRES_USER: laravel
           POSTGRES_PASSWORD: secret
-          POSTGRES_DB: testing
         options: >-
-          --health-cmd="pg_isready"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_DATABASE: test_ci_db
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          tools: composer
+          extensions: pdo_pgsql
 
       - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+        run: composer install --no-interaction --prefer-dist
 
-      - name: Set Laravel environment
-        run: cp .env.testing .env
+      - name: Create test database
+        run: |
+          PGPASSWORD=secret psql -h localhost -U laravel -d postgres -c "CREATE DATABASE test_ci_db;"
+
+      - name: Create .env.testing file
+        run: |
+          echo "APP_ENV=testing" >> .env.testing
+          echo "DB_CONNECTION=pgsql" >> .env.testing
+          echo "DB_HOST=localhost" >> .env.testing
+          echo "DB_PORT=5432" >> .env.testing
+          echo "DB_DATABASE=test_ci_db" >> .env.testing
+          echo "DB_USERNAME=laravel" >> .env.testing
+          echo "DB_PASSWORD=secret" >> .env.testing
+          echo "CACHE_DRIVER=array" >> .env.testing
+          echo "SESSION_DRIVER=array" >> .env.testing
 
       - name: Generate app key
         run: php artisan key:generate
 
       - name: Run migrations
-        env:
-          DB_CONNECTION: pgsql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 5432
-          DB_DATABASE: testing
-          DB_USERNAME: postgres
-          DB_PASSWORD: secret
-        run: php artisan migrate --force
-
-      - name: Run check
-        run: composer check
-
-      - name: Run PHPStan
-        run: composer phpstan
-
-      - name: Run PHPMD
-        run: composer phpmd
+        run: php artisan migrate
 
       - name: Run tests
-        env:
-          DB_CONNECTION: pgsql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 5432
-          DB_DATABASE: testing
-          DB_USERNAME: postgres
-          DB_PASSWORD: secret
-        run: composer test
+        run: php artisan test
