@@ -2,7 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Exceptions\TransferException;
+use App\Exceptions\AuthorizationDeniedException;
+use App\Exceptions\AuthorizationServiceException;
+use App\Exceptions\InsufficientFundsException;
+use App\Exceptions\RecipientNotFoundException;
+use App\Exceptions\TransferProcessException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepository;
 use App\Services\Authorization\AuthorizationService;
@@ -46,7 +50,7 @@ class TransferServiceTest extends TestCase
         $recipientId = 2;
         $amount = 100.00;
 
-        $this->expectException(TransferException::class);
+        $this->expectException(InsufficientFundsException::class);
         $this->expectExceptionMessage('Saldo insuficiente para realizar a transferência.');
 
         $this->transferService->executeTransfer($payer, $recipientId, $amount);
@@ -64,7 +68,7 @@ class TransferServiceTest extends TestCase
                 new \GuzzleHttp\Psr7\Response(200, [], json_encode(['data' => ['authorization' => false]]))
             ));
 
-        $this->expectException(TransferException::class);
+        $this->expectException(AuthorizationDeniedException::class);
         $this->expectExceptionMessage('Transação não autorizada pelo serviço externo.');
 
         $this->transferService->executeTransfer($payer, $recipientId, $amount);
@@ -80,7 +84,7 @@ class TransferServiceTest extends TestCase
             ->once()
             ->andThrow(new Exception('HTTP request failed'));
 
-        $this->expectException(TransferException::class);
+        $this->expectException(AuthorizationServiceException::class);
         $this->expectExceptionMessage('Erro ao consultar serviço autorizador.');
 
         $this->transferService->executeTransfer($payer, $recipientId, $amount);
@@ -98,7 +102,7 @@ class TransferServiceTest extends TestCase
                 new \GuzzleHttp\Psr7\Response(200, [], json_encode(['unexpected' => 'response']))
             ));
 
-        $this->expectException(TransferException::class);
+        $this->expectException(AuthorizationDeniedException::class);
         $this->expectExceptionMessage('Transação não autorizada pelo serviço externo.');
 
         $this->transferService->executeTransfer($payer, $recipientId, $amount);
@@ -121,7 +125,7 @@ class TransferServiceTest extends TestCase
             ->with($recipientId)
             ->andReturn(null);
 
-        $this->expectException(TransferException::class);
+        $this->expectException(RecipientNotFoundException::class);
         $this->expectExceptionMessage('Destinatário da transação não encontrado.');
 
         $this->transferService->executeTransfer($payer, $recipientId, $amount);
@@ -249,7 +253,7 @@ class TransferServiceTest extends TestCase
             ->shouldReceive('updateUserBalance')
             ->andThrow(new Exception('Database error during update'));
 
-        $this->expectException(TransferException::class);
+        $this->expectException(TransferProcessException::class);
         $this->expectExceptionMessage('Erro ao processar a transferência.');
 
         $this->transferService->executeTransfer($payer, $recipient->id, $amount);

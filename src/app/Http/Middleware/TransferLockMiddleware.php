@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Exceptions\TransferException;
+use App\Exceptions\TransferLockException;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
@@ -18,7 +18,7 @@ class TransferLockMiddleware
 
         try {
             if (!$lock->get()) {
-                throw new TransferException(
+                throw new TransferLockException(
                     'Outro processo está realizando uma transferência para este usuário. Tente novamente em instantes.',
                     429
                 );

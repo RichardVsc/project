@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Notification;
 
+use App\Exceptions\NotificationFailedException;
 use App\Models\Notification;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -63,7 +64,11 @@ class SendNotificationJob implements ShouldQueue
                 return;
             }
 
-            throw new Exception('Falha no envio da notificação');
+            throw new NotificationFailedException('Falha no envio da notificação');
+        } catch (NotificationFailedException $e) {
+            $attempt->status = 'failed';
+            $attempt->save();
+            $this->fail($e);
         } catch (Exception $e) {
             $attempt->status = 'failed';
             $attempt->save();

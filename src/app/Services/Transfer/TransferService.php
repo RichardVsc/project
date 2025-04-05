@@ -2,7 +2,12 @@
 
 namespace App\Services\Transfer;
 
+use App\Exceptions\AuthorizationDeniedException;
+use App\Exceptions\AuthorizationServiceException;
+use App\Exceptions\InsufficientFundsException;
+use App\Exceptions\RecipientNotFoundException;
 use App\Exceptions\TransferException;
+use App\Exceptions\TransferProcessException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
 use App\Services\Authorization\AuthorizationService;
@@ -42,7 +47,12 @@ class TransferService
      * @param int $recipientId The ID of the recipient user.
      * @param float $amount The amount to be transferred.
      * @return void
-     * @throws TransferException If the transfer fails or another process is already transferring for the user.
+     * @throws TransferException If the transfer fails or.
+     * @throws InsufficientFundsException If the user has insufficient funds.
+     * @throws AuthorizationDeniedException If the third party API doesnt authorize the request.
+     * @throws AuthorizationServiceException If the third party API could not be reached.
+     * @throws RecipientNotFoundException If the payee cannot be found.
+     * @throws TransferProcessException If the transfer process fails.
      */
     public function executeTransfer(User $payer, int $recipientId, float $amount)
     {
@@ -53,7 +63,13 @@ class TransferService
 
             $this->performTransfer($payer, $recipient, $amount);
             $this->sendNotification($recipient->id);
-        } catch (TransferException $e) {
+        } catch (
+            InsufficientFundsException |
+            AuthorizationDeniedException |
+            AuthorizationServiceException |
+            RecipientNotFoundException |
+            TransferProcessException $e
+        ) {
             throw $e;
         } catch (\Exception $e) {
             throw new TransferException('Erro ao processar a transferência.', 500, $e);
@@ -64,17 +80,17 @@ class TransferService
      * Retrieve the recipient user by ID.
      *
      * This method attempts to find the user with the given recipient ID.
-     * If the user is not found, it throws a TransferException.
+     * If the user is not found, it throws a RecipientNotFoundException.
      *
      * @param int $recipientId The ID of the recipient.
      * @return User The recipient user object.
-     * @throws TransferException If the recipient is not found.
+     * @throws RecipientNotFoundException If the recipient is not found.
      */
     private function getRecipient(int $recipientId): User
     {
         $recipient = $this->transferRepository->findUserById($recipientId);
         if (!$recipient) {
-            throw new TransferException('Destinatário da transação não encontrado.', 404);
+            throw new RecipientNotFoundException('Destinatário da transação não encontrado.', 404);
         }
 
         return $recipient;
@@ -91,7 +107,7 @@ class TransferService
      * @param User $recipient The user receiving the transfer.
      * @param float $amount The amount to be transferred.
      * @return void
-     * @throws TransferException If the transfer fails.
+     * @throws TransferProcessException If the transfer fails.
      */
     private function performTransfer(User $payer, User $recipient, float $amount): void
     {
@@ -114,7 +130,7 @@ class TransferService
             $connection->commit();
         } catch (\Exception $e) {
             $connection->rollBack();
-            throw new TransferException('Erro ao processar a transferência.', 500, $e);
+            throw new TransferProcessException('Erro ao processar a transferência.', 500, $e);
         }
     }
 
@@ -142,12 +158,12 @@ class TransferService
      * @param User $payer
      * @param float $amount
      * @return void
-     * @throws TransferException
+     * @throws InsufficientFundsException
      */
     private function checkBalance(User $payer, float $amount)
     {
         if ($payer->balance < $amount) {
-            throw new TransferException('Saldo insuficiente para realizar a transferência.', 400);
+            throw new InsufficientFundsException('Saldo insuficiente para realizar a transferência.', 400);
         }
     }
 
@@ -155,10 +171,11 @@ class TransferService
      * Authorize the transaction by contacting an external service.
      *
      * This method checks if the transaction is authorized by an external service.
-     * If not authorized or if an error occurs, a TransferException is thrown.
+     * If not authorized or if an error occurs, a AuthorizationDeniedException is thrown.
      *
      * @return void
-     * @throws TransferException
+     * @throws AuthorizationDeniedException
+     * @throws AuthorizationServiceException
      */
     private function authorizeTransaction()
     {
@@ -166,12 +183,12 @@ class TransferService
             $response = $this->authService->authorize();
 
             if (!$response->json('data.authorization')) {
-                throw new TransferException('Transação não autorizada pelo serviço externo.', 502);
+                throw new AuthorizationDeniedException('Transação não autorizada pelo serviço externo.', 502);
             }
-        } catch (TransferException $e) {
+        } catch (AuthorizationDeniedException $e) {
             throw $e;
         } catch (\Exception $e) {
-            throw new TransferException('Erro ao consultar serviço autorizador.', 500, $e);
+            throw new AuthorizationServiceException('Erro ao consultar serviço autorizador.', 500, $e);
         }
     }
 }
