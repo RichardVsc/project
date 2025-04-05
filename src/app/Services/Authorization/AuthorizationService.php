@@ -14,7 +14,7 @@ class AuthorizationService
      * This method sends a GET request to the authorization endpoint of the
      * external service to obtain the authorization status.
      *
-     * 
+     *
      * @return void
      * @throws AuthorizationDeniedException
      * @throws AuthorizationServiceException

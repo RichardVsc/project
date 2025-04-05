@@ -20,6 +20,7 @@ class RecipientResolver
     ) {
         $this->transferRepository = $transferRepository;
     }
+
     /**
      * Retrieve the recipient user by ID.
      *

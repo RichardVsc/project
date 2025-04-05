@@ -9,8 +9,6 @@ use App\Exceptions\RecipientNotFoundException;
 use App\Exceptions\TransferException;
 use App\Exceptions\TransferProcessException;
 use App\Models\User;
-use App\Services\Authorization\AuthorizationService;
-use App\Services\Notification\NotificationDispatcher;
 
 class TransferService
 {

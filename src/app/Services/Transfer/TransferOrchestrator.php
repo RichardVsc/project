@@ -42,7 +42,7 @@ class TransferOrchestrator
      *
      * This method validates the payer's balance, performs third-party authorization,
      * resolves the recipient, executes the transfer, and dispatches a notification.
-     * 
+     *
      * Exceptions thrown during any step will propagate to the caller.
      *
      * @param User $payer The user initiating the transfer.

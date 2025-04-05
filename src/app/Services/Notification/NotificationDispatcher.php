@@ -2,13 +2,12 @@
 
 namespace App\Services\Notification;
 
-use App\Jobs\Notification\SendNotificationJob;
 use Illuminate\Support\Facades\Log;
 
 class NotificationDispatcher
 {
     protected NotificationService $notificationService;
-    
+
     public function __construct(NotificationService $notificationService)
     {
         $this->notificationService = $notificationService;

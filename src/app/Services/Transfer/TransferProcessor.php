@@ -20,10 +20,9 @@ class TransferProcessor
      * @param TransferRepositoryInterface $transferRepository
      */
     public function __construct(
-        DatabaseManager $database, 
-        TransferRepositoryInterface $transferRepository, 
-        )
-    {
+        DatabaseManager $database,
+        TransferRepositoryInterface $transferRepository,
+    ) {
         $this->database = $database;
         $this->transferRepository = $transferRepository;
     }
