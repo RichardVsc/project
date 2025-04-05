@@ -6,8 +6,6 @@ use App\Exceptions\RecipientNotFoundException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
 use App\Services\Transfer\RecipientResolver;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class RecipientResolverIntegrationTest extends TestCase

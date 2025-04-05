@@ -45,18 +45,18 @@ class TransferProcessorIntegrationTest extends TestCase
 
         $this->assertDatabaseHas('users', [
             'id' => $payer->id,
-            'balance' => 800
+            'balance' => 800,
         ]);
 
         $this->assertDatabaseHas('users', [
             'id' => $recipient->id,
-            'balance' => 700
+            'balance' => 700,
         ]);
 
         $this->assertDatabaseHas('transfers', [
             'payer' => $payer->id,
             'payee' => $recipient->id,
-            'value' => $amount
+            'value' => $amount,
         ]);
     }
 

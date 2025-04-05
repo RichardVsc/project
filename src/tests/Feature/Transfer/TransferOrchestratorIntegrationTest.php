@@ -51,7 +51,7 @@ class TransferOrchestratorIntegrationTest extends TestCase
             TransactionCreated::class,
         ]);
 
-        $authService = \Mockery::mock(AuthorizationService::class);
+        $authService = Mockery::mock(AuthorizationService::class);
         $authService->shouldReceive('ensureAuthorized')->once()->andReturnTrue();
 
         $this->app->instance(AuthorizationService::class, $authService);
