@@ -2,12 +2,9 @@
 
 namespace Tests\Unit\Transfer;
 
-use App\Data\UserData;
-use App\Exceptions\InsufficientFundsException;
 use App\Exceptions\RecipientNotFoundException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
-use App\Services\Transfer\BalanceValidator;
 use App\Services\Transfer\RecipientResolver;
 use Mockery;
 use Tests\TestCase;

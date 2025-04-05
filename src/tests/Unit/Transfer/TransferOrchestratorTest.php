@@ -149,7 +149,7 @@ class TransferOrchestratorTest extends TestCase
 
     public function testOrchestrateThrowsRecipientNotFound()
     {
-        $this->expectException(\App\Exceptions\RecipientNotFoundException::class);
+        $this->expectException(RecipientNotFoundException::class);
 
         $data = new TransferRequestData(payerId: 1, recipientId: 999, amount: 50);
         $payer = new UserData(id: 1, balance: 500);
@@ -169,7 +169,7 @@ class TransferOrchestratorTest extends TestCase
 
     public function testOrchestrateThrowsTransferProcessException()
     {
-        $this->expectException(\App\Exceptions\TransferProcessException::class);
+        $this->expectException(TransferProcessException::class);
 
         $data = new TransferRequestData(payerId: 1, recipientId: 2, amount: 100);
         $payer = new UserData(id: 1, balance: 200);

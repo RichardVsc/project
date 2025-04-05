@@ -30,9 +30,9 @@ class AuthorizationServiceTest extends TestCase
         Http::fake([
             'https://util.devi.tools/api/v2/authorize' => Http::response([
                 'data' => [
-                    'authorization' => true
-                ]
-            ], 200)
+                    'authorization' => true,
+                ],
+            ], 200),
         ]);
 
         $this->authorizationService->ensureAuthorized();
@@ -47,9 +47,9 @@ class AuthorizationServiceTest extends TestCase
         Http::fake([
             'https://util.devi.tools/api/v2/authorize' => Http::response([
                 'data' => [
-                    'authorization' => false
-                ]
-            ], 200)
+                    'authorization' => false,
+                ],
+            ], 200),
         ]);
 
         $this->authorizationService->ensureAuthorized();
@@ -60,7 +60,7 @@ class AuthorizationServiceTest extends TestCase
         $this->expectException(AuthorizationServiceException::class);
 
         Http::fake([
-            'https://util.devi.tools/api/v2/authorize' => fn() => throw new \Exception('Falha na conexão')
+            'https://util.devi.tools/api/v2/authorize' => fn () => throw new \Exception('Falha na conexão'),
         ]);
 
         $this->authorizationService->ensureAuthorized();

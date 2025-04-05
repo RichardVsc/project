@@ -66,7 +66,7 @@ class TransferServiceTest extends TestCase
                 ->shouldReceive('orchestrate')
                 ->with($data)
                 ->once()
-                ->andThrow(new $exception("Erro"));
+                ->andThrow(new $exception('Erro'));
 
             $this->transferService->transfer($data);
         }
@@ -82,7 +82,7 @@ class TransferServiceTest extends TestCase
             ->shouldReceive('orchestrate')
             ->with($data)
             ->once()
-            ->andThrow(new \RuntimeException("Erro inesperado"));
+            ->andThrow(new \RuntimeException('Erro inesperado'));
 
         $this->transferService->transfer($data);
     }

@@ -2,11 +2,9 @@
 
 namespace Tests\Unit\Notification;
 
-use App\Jobs\Notification\SendNotificationJob;
 use App\Services\Notification\NotificationDispatcher;
 use App\Services\Notification\NotificationService;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Queue;
 use Mockery;
 use Tests\TestCase;
 
@@ -59,7 +57,7 @@ class NotificationDispatcherTest extends TestCase
                 return isset($context['error']) && $context['error'] === 'Simulated failure';
             }))
             ->once();
-            
+
         $this->addToAssertionCount(1);
     }
 }

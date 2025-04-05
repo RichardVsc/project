@@ -3,9 +3,7 @@
 namespace Tests\Unit\Notification;
 
 use App\Jobs\Notification\SendNotificationJob;
-use App\Repositories\Statement\StatementRepositoryInterface;
 use App\Services\Notification\NotificationService;
-use App\Services\Statement\StatementService;
 use Illuminate\Support\Facades\Queue;
 use Mockery;
 use Tests\TestCase;
