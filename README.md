@@ -17,14 +17,18 @@ Este projeto é uma plataforma de pagamentos que permite transferências de dinh
 ## 🔧 Componentes Principais
 
 1. **Request:** A requisição chega na aplicação através da rota configurada.
-2. **Redis Lock Middleware:** Garante que apenas uma transação por vez seja realizada para evitar concorrência.
-3. **TransferController:** Recebe a requisição e valida os dados iniciais.
-4. **TransferService:** Contém a lógica de negócio da transferência, realiza validações e utiliza serviços externos.
-   - **AuthorizationService:** Realiza a verificação de autorização de transferência com um serviço externo.
-   - **TransferRepository:** Responsável por interagir com o banco de dados.
-   - **NotificationService:** Envia notificações sobre transferências bem-sucedidas. 
-5. **Database:** Armazena os dados de transferências e usuários.
-6. **External Notification API:** Utilizada para notificar os usuários ou lojistas sobre transferências realizadas.
+2. **Redis Lock Middleware**: Garante que apenas uma transação por vez seja realizada para evitar concorrência.
+3. **TransferController**: Recebe a requisição, valida os dados iniciais e chama o TransferOrchestrator para gerenciar o fluxo da transferência.
+4. **TransferOrchestrator**: Orquestra o processo de transferência, coordenando as interações entre os diferentes serviços, como validação de saldo, autorização e execução da transferência.
+5. **TransferService**: Contém a lógica de negócio para realizar a transferência de forma coordenada, interagindo com os serviços necessários.
+   - **BalanceValidator**: Realiza a validação do saldo do usuário pagador para garantir que a transferência possa ser realizada.
+   - **RecipientResolver**: Resolve o destinatário da transferência, garantindo que o destinatário exista e está válido para a operação.
+   - **TransferProcessor**: Realiza a execução do processo de transferência entre o pagador e o destinatário, atualizando os saldos e registrando a transação.
+   - **AuthorizationService**: Verifica a autorização para a transferência, interagindo com serviços externos para garantir que a transação seja permitida.
+   - **TransferRepository**: Interage com o banco de dados para recuperar informações sobre usuários, transferências e armazenar as transações.
+   - **NotificationService**: Envia notificações para os usuários ou lojistas sobre transferências bem-sucedidas.
+6. **Database**: Armazena os dados de usuários, transferências e outras informações necessárias.
+7. **External Notification API**: Utilizada para notificar os usuários ou lojistas sobre transferências realizadas.
 
 ---
 
