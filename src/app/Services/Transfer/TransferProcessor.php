@@ -52,7 +52,7 @@ class TransferProcessor
             $recipient = $this->transferRepository->findAndLockUserById($recipient->id);
 
             if ($payer->balance < $amount) {
-                throw new InsufficientFundsException("Saldo insuficiente.");
+                throw new InsufficientFundsException('Saldo insuficiente.');
             }
 
             $payer->balance -= (int) $amount;

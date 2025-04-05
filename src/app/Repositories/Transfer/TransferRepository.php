@@ -61,6 +61,7 @@ class TransferRepository implements TransferRepositoryInterface
     public function getUserDataById(int $id): UserData
     {
         $user = User::findOrFail($id);
+
         return new UserData($user->id, $user->balance);
     }
 

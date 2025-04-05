@@ -2,8 +2,6 @@
 
 namespace App\Events;
 
-use App\Data\UserData;
-use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
