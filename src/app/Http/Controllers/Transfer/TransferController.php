@@ -42,7 +42,7 @@ class TransferController extends Controller
         $recipientId = $validated['recipient_id'];
         $amount = (int) round($validated['amount'] * 100);
 
-        $this->transferService->executeTransfer($payer, $recipientId, $amount);
+        $this->transferService->transfer($payer, $recipientId, $amount);
 
         return response()->json([
             'status' => 'success',

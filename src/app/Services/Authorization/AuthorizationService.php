@@ -2,6 +2,8 @@
 
 namespace App\Services\Authorization;
 
+use App\Exceptions\AuthorizationDeniedException;
+use App\Exceptions\AuthorizationServiceException;
 use Illuminate\Support\Facades\Http;
 
 class AuthorizationService
@@ -12,10 +14,23 @@ class AuthorizationService
      * This method sends a GET request to the authorization endpoint of the
      * external service to obtain the authorization status.
      *
-     * @return \Illuminate\Http\Client\Response
+     * 
+     * @return void
+     * @throws AuthorizationDeniedException
+     * @throws AuthorizationServiceException
      */
-    public function authorize()
+    public function ensureAuthorized(): void
     {
-        return Http::get('https://util.devi.tools/api/v2/authorize');
+        try {
+            $response = Http::get('https://util.devi.tools/api/v2/authorize');
+
+            if (!$response->json('data.authorization')) {
+                throw new AuthorizationDeniedException('Transação não autorizada pelo serviço externo.', 502);
+            }
+        } catch (AuthorizationDeniedException $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            throw new AuthorizationServiceException('Erro ao consultar serviço autorizador.', 500, $e);
+        }
     }
 }
