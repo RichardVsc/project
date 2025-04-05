@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit\Statement;
 
 use App\Repositories\Statement\StatementRepositoryInterface;
 use App\Services\Statement\StatementService;

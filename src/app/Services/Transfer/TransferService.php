@@ -9,7 +9,6 @@ use App\Exceptions\InsufficientFundsException;
 use App\Exceptions\RecipientNotFoundException;
 use App\Exceptions\TransferException;
 use App\Exceptions\TransferProcessException;
-use App\Models\User;
 
 class TransferService
 {
