@@ -2,16 +2,15 @@
 
 namespace App\Services\Transfer;
 
+use App\Events\TransactionCreated;
 use App\Models\User;
 use App\Services\Authorization\AuthorizationService;
-use App\Services\Notification\NotificationDispatcher;
 
 class TransferOrchestrator
 {
     protected AuthorizationService $authService;
     protected BalanceValidator $balanceValidator;
     protected TransferProcessor $transferProcessor;
-    protected NotificationDispatcher $notificationDispatcher;
     protected RecipientResolver $recipientResolver;
 
     /**
@@ -20,20 +19,17 @@ class TransferOrchestrator
      * @param AuthorizationService $authService
      * @param BalanceValidator $balanceValidator
      * @param TransferProcessor $transferProcessor
-     * @param NotificationDispatcher $notificationDispatcher
      * @param RecipientResolver $recipientResolver
      */
     public function __construct(
         AuthorizationService $authService,
         BalanceValidator $balanceValidator,
         TransferProcessor $transferProcessor,
-        NotificationDispatcher $notificationDispatcher,
         RecipientResolver $recipientResolver,
     ) {
         $this->authService = $authService;
         $this->balanceValidator = $balanceValidator;
         $this->transferProcessor = $transferProcessor;
-        $this->notificationDispatcher = $notificationDispatcher;
         $this->recipientResolver = $recipientResolver;
     }
 
@@ -63,6 +59,6 @@ class TransferOrchestrator
         $this->authService->ensureAuthorized();
         $recipient = $this->recipientResolver->resolve($recipientId);
         $this->transferProcessor->process($payer, $recipient, $amount);
-        $this->notificationDispatcher->dispatch($recipient->id);
+        event(new TransactionCreated($payer, $recipient, $amount));
     }
 }
