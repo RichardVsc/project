@@ -108,11 +108,18 @@ Você pode testar a rota de transferência da API usando ferramentas como cURL o
    ```
       Substitua SEU_TOKEN_AQUI pelo token gerado e recipient_id por um ID de usuário válido.
 
-   Resposta esperada:
+   Respostas esperadas:
    ```json
       {
          "status": "success",
-         "message": "Transfer successful!",
+         "message": "Transferência bem sucedida!",
+         "new_balance": 9500
+      }  
+   ```
+   ```json
+      {
+         "status": "error",
+         "message": "Transação não autorizada pelo serviço externo.",
          "new_balance": 9500
       }  
    ```

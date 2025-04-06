@@ -98,7 +98,7 @@ class TransferController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Transfer successful!',
+            'message' => 'Transferência bem sucedida!',
             'new_balance' => $payer->balance,
         ]);
     }
