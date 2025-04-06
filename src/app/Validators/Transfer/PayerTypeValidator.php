@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Services\Transfer;
+namespace App\Validators\Transfer;
 
 use App\Data\UserData;
-use App\Exceptions\InsufficientFundsException;
 use App\Exceptions\MerchantCannotTransferException;
 
 class PayerTypeValidator
@@ -12,9 +11,8 @@ class PayerTypeValidator
      * Check if the payer has enough balance for the transfer.
      *
      * @param UserData $payer
-     * @param float $amount
      * @return void
-     * @throws InsufficientFundsException
+     * @throws MerchantCannotTransferException
      */
     public function validate(UserData $payer)
     {

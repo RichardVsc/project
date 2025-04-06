@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Transfer;
+namespace App\Validators\Transfer;
 
 use App\Data\UserData;
 use App\Exceptions\InsufficientFundsException;

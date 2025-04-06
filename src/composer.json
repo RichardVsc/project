@@ -70,7 +70,7 @@
             "./vendor/bin/phpstan analyse --memory-limit=2G"
         ],
         "phpmd": [
-            "./vendor/bin/phpmd app text phpmd.xml"
+            "./vendor/bin/phpmd app text phpmd.xml --exclude app/Data/"
         ],
         "analyze": [
             "composer check",

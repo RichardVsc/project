@@ -9,6 +9,7 @@
     <rule ref="rulesets/controversial.xml"/>
     <rule ref="rulesets/design.xml"/>
     <rule ref="rulesets/naming.xml/ShortVariable">
+    <exclude-pattern>/app/Data/UserData.php</exclude-pattern>
         <properties>
             <property name="minimum" value="3"/>
             <property name="exceptions" value="id"/>

@@ -5,13 +5,10 @@ namespace App\Services\Transfer;
 use App\Data\TransferRequestData;
 use App\Events\TransactionCreated;
 use App\Repositories\Transfer\TransferRepositoryInterface;
-use App\Services\Authorization\AuthorizationService;
 
 class TransferOrchestrator
 {
-    protected AuthorizationService $authService;
-    protected PayerTypeValidator $payerTypeValidator;
-    protected BalanceValidator $balanceValidator;
+    protected TransferValidator $transferValidator;
     protected TransferProcessor $transferProcessor;
     protected RecipientResolver $recipientResolver;
     protected TransferRepositoryInterface $transferRepository;
@@ -20,21 +17,17 @@ class TransferOrchestrator
      * TransferService constructor.
      *
      * @param AuthorizationService $authService
-     * @param BalanceValidator $balanceValidator
      * @param TransferProcessor $transferProcessor
      * @param RecipientResolver $recipientResolver
+     * @param TransferRepositoryInterface $transferRepository
      */
     public function __construct(
-        AuthorizationService $authService,
-        PayerTypeValidator $payerTypeValidator,
-        BalanceValidator $balanceValidator,
+        TransferValidator $transferValidator,
         TransferProcessor $transferProcessor,
         RecipientResolver $recipientResolver,
         TransferRepositoryInterface $transferRepository,
     ) {
-        $this->authService = $authService;
-        $this->payerTypeValidator = $payerTypeValidator;
-        $this->balanceValidator = $balanceValidator;
+        $this->transferValidator = $transferValidator;
         $this->transferProcessor = $transferProcessor;
         $this->recipientResolver = $recipientResolver;
         $this->transferRepository = $transferRepository;
@@ -64,9 +57,7 @@ class TransferOrchestrator
         $payer = $this->transferRepository->getUserDataById($data->payerId);
         $recipient = $this->recipientResolver->resolve($data->recipientId);
 
-        $this->payerTypeValidator->validate($payer);
-        $this->balanceValidator->validate($payer, $data->amount);
-        $this->authService->ensureAuthorized();
+        $this->transferValidator->validate($payer, $data->amount);
         $this->transferProcessor->process($payer, $recipient, $data->amount);
         event(new TransactionCreated($payer->id, $recipient->id, $data->amount));
     }
