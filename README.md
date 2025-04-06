@@ -83,7 +83,41 @@ App\Models\User::all();
 
 ## 🧪 Testes e Análise de Código
 
-### Rodando os Testes
+### 📬 Testando a Rota de Transferência com cURL
+Você pode testar a rota de transferência da API usando ferramentas como cURL ou Postman. Essa rota é útil para simular transferências entre usuários sem a necessidade de sessão ou CSRF, ideal para testes manuais.
+
+1. Gerar um token de autenticação
+   - Dentro do container docker, execute:
+      ```bash
+         php artisan tinker
+      ```
+   - Dentro do tinker:
+      ```bash
+         $user = App\Models\User::find(1); // ID de um usuário válido
+         $token = $user->createToken('TestToken')->plainTextToken;
+      ```
+      Guarde esse token para usar nas requisições.
+
+2. Fazer a requisição com cURL
+   ```bash
+      curl -X POST http://localhost:8080/api/transfer \
+      -H "Authorization: Bearer SEU_TOKEN_AQUI" \
+      -H "Accept: application/json" \
+      -d "recipient_id=2" \
+      -d "amount=50.00"
+   ```
+      Substitua SEU_TOKEN_AQUI pelo token gerado e recipient_id por um ID de usuário válido.
+
+   Resposta esperada:
+   ```json
+      {
+         "status": "success",
+         "message": "Transfer successful!",
+         "new_balance": 9500
+      }  
+   ```
+
+### 📤 Rodando os Testes
 Para rodar todos os testes automatizados:
 ```bash
 composer test
