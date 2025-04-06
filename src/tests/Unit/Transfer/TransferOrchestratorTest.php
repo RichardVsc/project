@@ -13,11 +13,12 @@ use App\Exceptions\TransferProcessException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
 use App\Services\Authorization\AuthorizationService;
-use App\Services\Transfer\BalanceValidator;
-use App\Services\Transfer\PayerTypeValidator;
 use App\Services\Transfer\RecipientResolver;
 use App\Services\Transfer\TransferOrchestrator;
 use App\Services\Transfer\TransferProcessor;
+use App\Services\Transfer\TransferValidator;
+use App\Validators\Transfer\BalanceValidator;
+use App\Validators\Transfer\PayerTypeValidator;
 use Illuminate\Support\Facades\Event;
 use Mockery;
 use Tests\TestCase;
@@ -27,6 +28,7 @@ class TransferOrchestratorTest extends TestCase
     protected $authServiceMock;
     protected $payerTypeValidator;
     protected $balanceValidatorMock;
+    protected $transferValidatorMock;
     protected $transferProcessorMock;
     protected $recipientResolverMock;
     protected $transferRepositoryMock;
@@ -38,13 +40,12 @@ class TransferOrchestratorTest extends TestCase
         $this->authServiceMock = Mockery::mock(AuthorizationService::class);
         $this->payerTypeValidator = Mockery::mock(PayerTypeValidator::class);
         $this->balanceValidatorMock = Mockery::mock(BalanceValidator::class);
+        $this->transferValidatorMock = Mockery::mock(TransferValidator::class);
         $this->transferProcessorMock = Mockery::mock(TransferProcessor::class);
         $this->recipientResolverMock = Mockery::mock(RecipientResolver::class);
         $this->transferRepositoryMock = Mockery::mock(TransferRepositoryInterface::class);
         $this->transferOrchestrator = new TransferOrchestrator(
-            $this->authServiceMock,
-            $this->payerTypeValidator,
-            $this->balanceValidatorMock,
+            $this->transferValidatorMock,
             $this->transferProcessorMock,
             $this->recipientResolverMock,
             $this->transferRepositoryMock
@@ -78,18 +79,9 @@ class TransferOrchestratorTest extends TestCase
             ->once()
             ->andReturn($recipient);
 
-        $this->payerTypeValidator
-            ->shouldReceive('validate')
-            ->with($payer)
-            ->once();
-
-        $this->balanceValidatorMock
+        $this->transferValidatorMock
             ->shouldReceive('validate')
             ->with($payer, $data->amount)
-            ->once();
-
-        $this->authServiceMock
-            ->shouldReceive('ensureAuthorized')
             ->once();
 
         $this->transferProcessorMock
@@ -123,7 +115,7 @@ class TransferOrchestratorTest extends TestCase
             ->shouldReceive('resolve')
             ->andReturn($recipient);
 
-        $this->payerTypeValidator
+        $this->transferValidatorMock
             ->shouldReceive('validate')
             ->andThrow(new MerchantCannotTransferException('Lojistas não podem realizar transferências.'));
 
@@ -147,12 +139,7 @@ class TransferOrchestratorTest extends TestCase
             ->shouldReceive('resolve')
             ->andReturn($recipient);
 
-        $this->payerTypeValidator
-            ->shouldReceive('validate')
-            ->with($payer)
-            ->once();
-
-        $this->balanceValidatorMock
+        $this->transferValidatorMock
             ->shouldReceive('validate')
             ->andThrow(new InsufficientFundsException('Saldo insuficiente'));
 
@@ -182,8 +169,8 @@ class TransferOrchestratorTest extends TestCase
         $this->balanceValidatorMock
             ->shouldReceive('validate');
 
-        $this->authServiceMock
-            ->shouldReceive('ensureAuthorized')
+        $this->transferValidatorMock
+            ->shouldReceive('validate')
             ->andThrow(new AuthorizationDeniedException('Negado'));
 
         $this->transferOrchestrator->orchestrate($data);
@@ -226,14 +213,8 @@ class TransferOrchestratorTest extends TestCase
             ->shouldReceive('resolve')
             ->andReturn($recipient);
 
-        $this->balanceValidatorMock
+        $this->transferValidatorMock
             ->shouldReceive('validate');
-
-        $this->payerTypeValidator
-            ->shouldReceive('validate');
-
-        $this->authServiceMock
-            ->shouldReceive('ensureAuthorized');
 
         $this->transferProcessorMock
             ->shouldReceive('process')

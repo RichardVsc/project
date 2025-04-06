@@ -10,11 +10,12 @@ use App\Exceptions\RecipientNotFoundException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepository;
 use App\Services\Authorization\AuthorizationService;
-use App\Services\Transfer\BalanceValidator;
-use App\Services\Transfer\PayerTypeValidator;
 use App\Services\Transfer\RecipientResolver;
 use App\Services\Transfer\TransferOrchestrator;
 use App\Services\Transfer\TransferProcessor;
+use App\Services\Transfer\TransferValidator;
+use App\Validators\Transfer\BalanceValidator;
+use App\Validators\Transfer\PayerTypeValidator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Mockery;
@@ -32,16 +33,12 @@ class TransferOrchestratorIntegrationTest extends TestCase
 
         $repository = new TransferRepository();
         $database = app('db');
-        $authService = new AuthorizationService();
-        $payerTypeValidator = new PayerTypeValidator();
-        $balanceValidator = new BalanceValidator();
+        $transferValidator = new TransferValidator(new AuthorizationService(), new PayerTypeValidator(), new BalanceValidator());
         $transferProcessor = new TransferProcessor($database, $repository);
         $recipientResolver = new RecipientResolver($repository);
 
         $this->orchestrator = new TransferOrchestrator(
-            $authService,
-            $payerTypeValidator,
-            $balanceValidator,
+            $transferValidator,
             $transferProcessor,
             $recipientResolver,
             $repository,
@@ -61,18 +58,15 @@ class TransferOrchestratorIntegrationTest extends TestCase
 
         $repository = new TransferRepository();
         $database = app('db');
-        $payerTypeValidator = new PayerTypeValidator();
-        $balanceValidator = new BalanceValidator();
+        $transferValidator = new TransferValidator($authService, new PayerTypeValidator(), new BalanceValidator());
         $transferProcessor = new TransferProcessor($database, $repository);
         $recipientResolver = new RecipientResolver($repository);
 
         $orchestrator = new TransferOrchestrator(
-            $authService,
-            $payerTypeValidator,
-            $balanceValidator,
+            $transferValidator,
             $transferProcessor,
             $recipientResolver,
-            $repository
+            $repository,
         );
 
         $payer = User::factory()->create(['balance' => 1000]);
@@ -147,25 +141,22 @@ class TransferOrchestratorIntegrationTest extends TestCase
         $payer = User::factory()->create(['balance' => 1000]);
         $recipient = User::factory()->create(['balance' => 100]);
 
-        $mock = Mockery::mock(AuthorizationService::class);
-        $mock->shouldReceive('ensureAuthorized')->once()
+        $authService = Mockery::mock(AuthorizationService::class);
+        $authService->shouldReceive('ensureAuthorized')->once()
             ->andThrow(new AuthorizationDeniedException('Negado', 502));
-        $this->app->instance(AuthorizationService::class, $mock);
+        $this->app->instance(AuthorizationService::class, $authService);
 
         $repository = new TransferRepository();
         $database = app('db');
-        $payerTypeValidator = new PayerTypeValidator();
-        $balanceValidator = new BalanceValidator();
+        $transferValidator = new TransferValidator($authService, new PayerTypeValidator(), new BalanceValidator());
         $transferProcessor = new TransferProcessor($database, $repository);
         $recipientResolver = new RecipientResolver($repository);
 
         $orchestrator = new TransferOrchestrator(
-            $mock,
-            $payerTypeValidator,
-            $balanceValidator,
+            $transferValidator,
             $transferProcessor,
             $recipientResolver,
-            $repository
+            $repository,
         );
 
         $data = new TransferRequestData(

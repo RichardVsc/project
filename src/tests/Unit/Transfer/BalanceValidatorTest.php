@@ -4,7 +4,7 @@ namespace Tests\Unit\Transfer;
 
 use App\Data\UserData;
 use App\Exceptions\InsufficientFundsException;
-use App\Services\Transfer\BalanceValidator;
+use App\Validators\Transfer\BalanceValidator;
 use Mockery;
 use Tests\TestCase;
 

@@ -4,7 +4,7 @@ namespace Tests\Unit\Transfer;
 
 use App\Data\UserData;
 use App\Exceptions\MerchantCannotTransferException;
-use App\Services\Transfer\PayerTypeValidator;
+use App\Validators\Transfer\PayerTypeValidator;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
