@@ -61,4 +61,45 @@ class TransferController extends Controller
             'new_balance' => $payer->balance,
         ], 200);
     }
+
+    /**
+     * Handle API-based transfer requests for testing purposes.
+     *
+     * This endpoint is designed for use with tools such as Postman or cURL.
+     * It allows authenticated users (via API token) to simulate a transfer
+     * without requiring a session or CSRF token, making it ideal for testing
+     * and external integration scenarios.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function apiStore(Request $request)
+    {
+        $validated = $request->validate([
+            'recipient_id' => 'required|exists:users,id',
+            'amount' => 'required|numeric|min:0.01',
+        ]);
+
+        $payer = Auth::guard('api')->user();
+        if (!$payer) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $recipientId = $validated['recipient_id'];
+        $amount = (int) round($validated['amount'] * 100);
+
+        $data = new TransferRequestData(
+            payerId: $payer->id,
+            recipientId: $recipientId,
+            amount: $amount
+        );
+
+        $this->transferService->transfer($data);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Transfer successful!',
+            'new_balance' => $payer->balance,
+        ]);
+    }
 }
