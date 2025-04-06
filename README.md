@@ -109,13 +109,15 @@ Você pode testar a rota de transferência da API usando ferramentas como cURL o
       Substitua SEU_TOKEN_AQUI pelo token gerado e recipient_id por um ID de usuário válido.
 
    Respostas esperadas:
+   - Sucesso
    ```json
       {
          "status": "success",
          "message": "Transferência bem sucedida!",
          "new_balance": 9500
-      }  
+      }     
    ```
+   - Não autorizado
    ```json
       {
          "status": "error",
@@ -123,6 +125,42 @@ Você pode testar a rota de transferência da API usando ferramentas como cURL o
          "new_balance": 9500
       }  
    ```
+   - Usuário do tipo lojista não pode transferir
+   ```json
+      {
+         "status": "error",
+         "message": "Lojistas não podem realizar transferências.",
+      }  
+   ```
+   - Saldo insuficiente
+   ```json
+      {
+         "status": "error",
+         "message": "Saldo insuficiente.",
+      }  
+   ```
+   - Destinatário não encontrado
+   ```json
+      {
+         "status": "error",
+         "message": "Destinatário da transação não encontrado.",
+      }  
+   ```
+   - Serviço de autorização indisponível
+   ```json
+      {
+         "status": "error",
+         "message": "Erro ao consultar serviço autorizador.",
+      }  
+   ```
+   - Erro interno durante a transferência
+   ```json
+      {
+         "status": "error",
+         "message": "Erro ao processar a transferência.",
+      }  
+   ```
+
 
 ### 📤 Rodando os Testes
 Para rodar todos os testes automatizados:
