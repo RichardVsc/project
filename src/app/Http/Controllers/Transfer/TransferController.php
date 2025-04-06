@@ -70,7 +70,7 @@ class TransferController extends Controller
      * without requiring a session or CSRF token, making it ideal for testing
      * and external integration scenarios.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function apiStore(Request $request)
