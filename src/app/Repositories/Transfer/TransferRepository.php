@@ -62,7 +62,7 @@ class TransferRepository implements TransferRepositoryInterface
     {
         $user = User::findOrFail($id);
 
-        return new UserData($user->id, $user->balance);
+        return new UserData($user->id, $user->user_type, $user->balance);
     }
 
     /**

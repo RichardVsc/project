@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Repositories\Transfer\TransferRepository;
 use App\Services\Authorization\AuthorizationService;
 use App\Services\Transfer\BalanceValidator;
+use App\Services\Transfer\PayerTypeValidator;
 use App\Services\Transfer\RecipientResolver;
 use App\Services\Transfer\TransferOrchestrator;
 use App\Services\Transfer\TransferProcessor;
@@ -32,12 +33,14 @@ class TransferOrchestratorIntegrationTest extends TestCase
         $repository = new TransferRepository();
         $database = app('db');
         $authService = new AuthorizationService();
+        $payerTypeValidator = new PayerTypeValidator();
         $balanceValidator = new BalanceValidator();
         $transferProcessor = new TransferProcessor($database, $repository);
         $recipientResolver = new RecipientResolver($repository);
 
         $this->orchestrator = new TransferOrchestrator(
             $authService,
+            $payerTypeValidator,
             $balanceValidator,
             $transferProcessor,
             $recipientResolver,
@@ -58,12 +61,14 @@ class TransferOrchestratorIntegrationTest extends TestCase
 
         $repository = new TransferRepository();
         $database = app('db');
+        $payerTypeValidator = new PayerTypeValidator();
         $balanceValidator = new BalanceValidator();
         $transferProcessor = new TransferProcessor($database, $repository);
         $recipientResolver = new RecipientResolver($repository);
 
         $orchestrator = new TransferOrchestrator(
             $authService,
+            $payerTypeValidator,
             $balanceValidator,
             $transferProcessor,
             $recipientResolver,
@@ -149,12 +154,14 @@ class TransferOrchestratorIntegrationTest extends TestCase
 
         $repository = new TransferRepository();
         $database = app('db');
+        $payerTypeValidator = new PayerTypeValidator();
         $balanceValidator = new BalanceValidator();
         $transferProcessor = new TransferProcessor($database, $repository);
         $recipientResolver = new RecipientResolver($repository);
 
         $orchestrator = new TransferOrchestrator(
             $mock,
+            $payerTypeValidator,
             $balanceValidator,
             $transferProcessor,
             $recipientResolver,

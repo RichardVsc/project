@@ -41,7 +41,7 @@ class TransferProcessorTest extends TestCase
 
     public function testProcessSucceedsWhenBalanceIsSufficient()
     {
-        $payerDto = new UserData(id: 1, balance: 100);
+        $payerDto = new UserData(id: 1, user_type: 'common', balance: 100);
         $amount = 50.0;
 
         $payer = Mockery::mock(User::class)->makePartial();
@@ -75,7 +75,7 @@ class TransferProcessorTest extends TestCase
 
     public function testProcessThrowsInsufficientFundsException()
     {
-        $payerDto = new UserData(id: 1, balance: 10);
+        $payerDto = new UserData(id: 1, user_type: 'common', balance: 10);
         $amount = 50.0;
 
         $payer = Mockery::mock(User::class)->makePartial();
@@ -104,7 +104,7 @@ class TransferProcessorTest extends TestCase
 
     public function testProcessThrowsTransferProcessExceptionOnGenericError()
     {
-        $payerDto = new UserData(id: 1, balance: 100);
+        $payerDto = new UserData(id: 1, user_type: 'common', balance: 100);
         $amount = 50.0;
 
         $recipient = Mockery::mock(User::class)->makePartial();

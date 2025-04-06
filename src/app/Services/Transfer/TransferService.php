@@ -6,6 +6,7 @@ use App\Data\TransferRequestData;
 use App\Exceptions\AuthorizationDeniedException;
 use App\Exceptions\AuthorizationServiceException;
 use App\Exceptions\InsufficientFundsException;
+use App\Exceptions\MerchantCannotTransferException;
 use App\Exceptions\RecipientNotFoundException;
 use App\Exceptions\TransferException;
 use App\Exceptions\TransferProcessException;
@@ -34,6 +35,7 @@ class TransferService
      *
      * @param TransferRequestData $data.
      * @return void
+     * @throws MerchantCannotTransferException If the user is merchant.
      * @throws InsufficientFundsException If the user has insufficient funds.
      * @throws AuthorizationDeniedException If the third party API doesnt authorize the request.
      * @throws AuthorizationServiceException If the third party API could not be reached.
@@ -45,6 +47,7 @@ class TransferService
         try {
             $this->transferOrchestrator->orchestrate($data);
         } catch (
+            MerchantCannotTransferException |
             InsufficientFundsException |
             RecipientNotFoundException |
             TransferProcessException |

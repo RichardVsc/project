@@ -8,6 +8,7 @@ use App\Repositories\Transfer\TransferRepository;
 use App\Repositories\Transfer\TransferRepositoryInterface;
 use App\Services\Authorization\AuthorizationService;
 use App\Services\Transfer\BalanceValidator;
+use App\Services\Transfer\PayerTypeValidator;
 use App\Services\Transfer\RecipientResolver;
 use App\Services\Transfer\TransferOrchestrator;
 use App\Services\Transfer\TransferProcessor;
@@ -27,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
             return new TransferService(
                 new TransferOrchestrator(
                     new AuthorizationService(),
+                    new PayerTypeValidator(),
                     new BalanceValidator(),
                     new TransferProcessor($app['db'], $app->make(TransferRepositoryInterface::class)),
                     new RecipientResolver($app->make(TransferRepositoryInterface::class)),

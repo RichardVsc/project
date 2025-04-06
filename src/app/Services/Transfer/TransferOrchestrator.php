@@ -10,6 +10,7 @@ use App\Services\Authorization\AuthorizationService;
 class TransferOrchestrator
 {
     protected AuthorizationService $authService;
+    protected PayerTypeValidator $payerTypeValidator;
     protected BalanceValidator $balanceValidator;
     protected TransferProcessor $transferProcessor;
     protected RecipientResolver $recipientResolver;
@@ -25,12 +26,14 @@ class TransferOrchestrator
      */
     public function __construct(
         AuthorizationService $authService,
+        PayerTypeValidator $payerTypeValidator,
         BalanceValidator $balanceValidator,
         TransferProcessor $transferProcessor,
         RecipientResolver $recipientResolver,
         TransferRepositoryInterface $transferRepository,
     ) {
         $this->authService = $authService;
+        $this->payerTypeValidator = $payerTypeValidator;
         $this->balanceValidator = $balanceValidator;
         $this->transferProcessor = $transferProcessor;
         $this->recipientResolver = $recipientResolver;
@@ -54,12 +57,14 @@ class TransferOrchestrator
      * @throws \App\Exceptions\AuthorizationServiceException
      * @throws \App\Exceptions\RecipientNotFoundException
      * @throws \App\Exceptions\TransferProcessException
+     * @throws \App\Exceptions\MerchantCannotTransferException
      */
     public function orchestrate(TransferRequestData $data): void
     {
         $payer = $this->transferRepository->getUserDataById($data->payerId);
         $recipient = $this->recipientResolver->resolve($data->recipientId);
 
+        $this->payerTypeValidator->validate($payer);
         $this->balanceValidator->validate($payer, $data->amount);
         $this->authService->ensureAuthorized();
         $this->transferProcessor->process($payer, $recipient, $data->amount);

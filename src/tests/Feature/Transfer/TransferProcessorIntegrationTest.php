@@ -36,6 +36,7 @@ class TransferProcessorIntegrationTest extends TestCase
 
         $payerData = new UserData(
             id: $payer->id,
+            user_type: $payer->user_type,
             balance: $payer->balance
         );
 
@@ -45,11 +46,13 @@ class TransferProcessorIntegrationTest extends TestCase
 
         $this->assertDatabaseHas('users', [
             'id' => $payer->id,
+            'user_type' => $payer->user_type,
             'balance' => 800,
         ]);
 
         $this->assertDatabaseHas('users', [
             'id' => $recipient->id,
+            'user_type' => $payer->user_type,
             'balance' => 700,
         ]);
 
@@ -67,6 +70,7 @@ class TransferProcessorIntegrationTest extends TestCase
 
         $payerData = new UserData(
             id: $payer->id,
+            user_type: $payer->user_type,
             balance: $payer->balance
         );
 

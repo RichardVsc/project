@@ -7,12 +7,14 @@ use App\Data\UserData;
 use App\Events\TransactionCreated;
 use App\Exceptions\AuthorizationDeniedException;
 use App\Exceptions\InsufficientFundsException;
+use App\Exceptions\MerchantCannotTransferException;
 use App\Exceptions\RecipientNotFoundException;
 use App\Exceptions\TransferProcessException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
 use App\Services\Authorization\AuthorizationService;
 use App\Services\Transfer\BalanceValidator;
+use App\Services\Transfer\PayerTypeValidator;
 use App\Services\Transfer\RecipientResolver;
 use App\Services\Transfer\TransferOrchestrator;
 use App\Services\Transfer\TransferProcessor;
@@ -23,6 +25,7 @@ use Tests\TestCase;
 class TransferOrchestratorTest extends TestCase
 {
     protected $authServiceMock;
+    protected $payerTypeValidator;
     protected $balanceValidatorMock;
     protected $transferProcessorMock;
     protected $recipientResolverMock;
@@ -33,12 +36,14 @@ class TransferOrchestratorTest extends TestCase
     {
         parent::setUp();
         $this->authServiceMock = Mockery::mock(AuthorizationService::class);
+        $this->payerTypeValidator = Mockery::mock(PayerTypeValidator::class);
         $this->balanceValidatorMock = Mockery::mock(BalanceValidator::class);
         $this->transferProcessorMock = Mockery::mock(TransferProcessor::class);
         $this->recipientResolverMock = Mockery::mock(RecipientResolver::class);
         $this->transferRepositoryMock = Mockery::mock(TransferRepositoryInterface::class);
         $this->transferOrchestrator = new TransferOrchestrator(
             $this->authServiceMock,
+            $this->payerTypeValidator,
             $this->balanceValidatorMock,
             $this->transferProcessorMock,
             $this->recipientResolverMock,
@@ -57,7 +62,7 @@ class TransferOrchestratorTest extends TestCase
         Event::fake();
 
         $data = new TransferRequestData(payerId: 1, recipientId: 2, amount: 100.0);
-        $payer = new UserData(id: 1, balance: 200.0);
+        $payer = new UserData(id: 1, user_type: 'common', balance: 200.0);
         $recipient = Mockery::mock(User::class)->makePartial();
         $recipient->id = 2;
 
@@ -72,6 +77,11 @@ class TransferOrchestratorTest extends TestCase
             ->with($data->recipientId)
             ->once()
             ->andReturn($recipient);
+
+        $this->payerTypeValidator
+            ->shouldReceive('validate')
+            ->with($payer)
+            ->once();
 
         $this->balanceValidatorMock
             ->shouldReceive('validate')
@@ -96,12 +106,12 @@ class TransferOrchestratorTest extends TestCase
         });
     }
 
-    public function testOrchestrateThrowsInsufficientFunds()
+    public function testOrchestrateThrowsPayerNotAuthorized()
     {
-        $this->expectException(InsufficientFundsException::class);
+        $this->expectException(MerchantCannotTransferException::class);
 
-        $data = new TransferRequestData(payerId: 1, recipientId: 2, amount: 150);
-        $payer = new UserData(id: 1, balance: 100);
+        $data = new TransferRequestData(payerId: 1, recipientId: 2, amount: 100);
+        $payer = new UserData(id: 1, user_type: 'merchant', balance: 100);
         $recipient = Mockery::mock(User::class)->makePartial();
         $recipient->id = 2;
 
@@ -112,6 +122,35 @@ class TransferOrchestratorTest extends TestCase
         $this->recipientResolverMock
             ->shouldReceive('resolve')
             ->andReturn($recipient);
+
+        $this->payerTypeValidator
+            ->shouldReceive('validate')
+            ->andThrow(new MerchantCannotTransferException('Lojistas não podem realizar transferências.'));
+
+        $this->transferOrchestrator->orchestrate($data);
+    }
+
+    public function testOrchestrateThrowsInsufficientFunds()
+    {
+        $this->expectException(InsufficientFundsException::class);
+
+        $data = new TransferRequestData(payerId: 1, recipientId: 2, amount: 150);
+        $payer = new UserData(id: 1, user_type: 'common', balance: 100);
+        $recipient = Mockery::mock(User::class)->makePartial();
+        $recipient->id = 2;
+
+        $this->transferRepositoryMock
+            ->shouldReceive('getUserDataById')
+            ->andReturn($payer);
+
+        $this->recipientResolverMock
+            ->shouldReceive('resolve')
+            ->andReturn($recipient);
+
+        $this->payerTypeValidator
+            ->shouldReceive('validate')
+            ->with($payer)
+            ->once();
 
         $this->balanceValidatorMock
             ->shouldReceive('validate')
@@ -125,7 +164,7 @@ class TransferOrchestratorTest extends TestCase
         $this->expectException(AuthorizationDeniedException::class);
 
         $data = new TransferRequestData(payerId: 1, recipientId: 2, amount: 100);
-        $payer = new UserData(id: 1, balance: 200);
+        $payer = new UserData(id: 1, user_type: 'common', balance: 200);
         $recipient = Mockery::mock(User::class)->makePartial();
         $recipient->id = 2;
 
@@ -136,6 +175,9 @@ class TransferOrchestratorTest extends TestCase
         $this->recipientResolverMock
             ->shouldReceive('resolve')
             ->andReturn($recipient);
+
+        $this->payerTypeValidator
+            ->shouldReceive('validate');
 
         $this->balanceValidatorMock
             ->shouldReceive('validate');
@@ -152,7 +194,7 @@ class TransferOrchestratorTest extends TestCase
         $this->expectException(RecipientNotFoundException::class);
 
         $data = new TransferRequestData(payerId: 1, recipientId: 999, amount: 50);
-        $payer = new UserData(id: 1, balance: 500);
+        $payer = new UserData(id: 1, user_type: 'common', balance: 500);
 
         $this->transferRepositoryMock
             ->shouldReceive('getUserDataById')
@@ -172,7 +214,7 @@ class TransferOrchestratorTest extends TestCase
         $this->expectException(TransferProcessException::class);
 
         $data = new TransferRequestData(payerId: 1, recipientId: 2, amount: 100);
-        $payer = new UserData(id: 1, balance: 200);
+        $payer = new UserData(id: 1, user_type: 'common', balance: 200);
         $recipient = Mockery::mock(User::class)->makePartial();
         $recipient->id = 2;
 
@@ -185,6 +227,9 @@ class TransferOrchestratorTest extends TestCase
             ->andReturn($recipient);
 
         $this->balanceValidatorMock
+            ->shouldReceive('validate');
+
+        $this->payerTypeValidator
             ->shouldReceive('validate');
 
         $this->authServiceMock

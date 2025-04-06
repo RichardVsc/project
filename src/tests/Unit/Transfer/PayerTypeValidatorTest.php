@@ -3,19 +3,19 @@
 namespace Tests\Unit\Transfer;
 
 use App\Data\UserData;
-use App\Exceptions\InsufficientFundsException;
-use App\Services\Transfer\BalanceValidator;
+use App\Exceptions\MerchantCannotTransferException;
+use App\Services\Transfer\PayerTypeValidator;
 use Mockery;
-use Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 
-class BalanceValidatorTest extends TestCase
+class PayerTypeValidatorTest extends TestCase
 {
-    protected $balanceValidator;
+    protected $payerTypeValidator;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->balanceValidator = new BalanceValidator();
+        $this->payerTypeValidator = new PayerTypeValidator();
     }
 
     public function tearDown(): void
@@ -32,22 +32,22 @@ class BalanceValidatorTest extends TestCase
             balance: 10000
         );
 
-        $this->balanceValidator->validate($payer, 5000);
+        $this->payerTypeValidator->validate($payer);
 
         $this->assertTrue(true);
     }
 
     public function testValidateThrowsInsufficientFundsExceptionWhenBalanceIsInsufficient()
     {
-        $this->expectException(InsufficientFundsException::class);
-        $this->expectExceptionMessage('Saldo insuficiente para realizar a transferência.');
+        $this->expectException(MerchantCannotTransferException::class);
+        $this->expectExceptionMessage('Lojistas não podem realizar transferências.');
 
         $payer = new UserData(
             id: 1,
-            user_type: 'common',
+            user_type: 'merchant',
             balance: 3000
         );
 
-        $this->balanceValidator->validate($payer, 5000);
+        $this->payerTypeValidator->validate($payer);
     }
 }
