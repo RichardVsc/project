@@ -16,7 +16,7 @@ class TransferOrchestrator
     /**
      * TransferService constructor.
      *
-     * @param AuthorizationService $authService
+     * @param TransferValidator $transferValidator
      * @param TransferProcessor $transferProcessor
      * @param RecipientResolver $recipientResolver
      * @param TransferRepositoryInterface $transferRepository
