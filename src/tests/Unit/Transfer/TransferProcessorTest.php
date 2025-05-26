@@ -100,7 +100,6 @@ class TransferProcessorTest extends TestCase
             ->once()
             ->with($payerDto, $amount);
 
-
         $this->transferProcessor->process($payerDto, $recipient, $amount);
 
         $this->assertTrue(true);

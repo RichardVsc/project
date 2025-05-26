@@ -92,9 +92,9 @@ class TransferRepository implements TransferRepositoryInterface
      *
      * @param User $user  The user whose balance will be debited.
      * @param float $amount  The amount to be debited.
-     * 
+     *
      * @throws InsufficientFundsException  If the user's balance is insufficient.
-     * 
+     *
      * @return User  The updated User instance with the new balance.
      */
     public function debitUser(User $user, float $amount): User
@@ -113,7 +113,7 @@ class TransferRepository implements TransferRepositoryInterface
      *
      * @param User $user  The user whose balance will be credited.
      * @param float $amount  The amount to be credited.
-     * 
+     *
      * @return User  The updated User instance with the new balance.
      */
     public function creditUser(User $user, float $amount): User

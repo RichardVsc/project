@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Mappers\UserDataMapper;
 use App\Repositories\Statement\StatementRepository;
 use App\Repositories\Statement\StatementRepositoryInterface;
 use App\Repositories\Transfer\TransferRepository;
@@ -15,7 +16,6 @@ use App\Services\Transfer\TransferValidator;
 use App\Validators\Transfer\BalanceValidator;
 use App\Validators\Transfer\PayerTypeValidator;
 use Illuminate\Support\ServiceProvider;
-use App\Mappers\UserDataMapper;
 
 class AppServiceProvider extends ServiceProvider
 {

@@ -68,8 +68,8 @@ interface TransferRepositoryInterface
      *
      * @param User $user  The user whose balance will be debited.
      * @param float $amount  The amount to be debited.
-     * 
-     * 
+     *
+     *
      * @return User  The updated User instance with the new balance.
      */
     public function debitUser(User $user, float $amount): User;
@@ -82,7 +82,7 @@ interface TransferRepositoryInterface
      *
      * @param User $user  The user whose balance will be credited.
      * @param float $amount  The amount to be credited.
-     * 
+     *
      * @return User  The updated User instance with the new balance.
      */
     public function creditUser(User $user, float $amount): User;
