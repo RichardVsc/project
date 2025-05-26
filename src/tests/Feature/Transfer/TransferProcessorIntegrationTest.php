@@ -4,7 +4,6 @@ namespace Tests\Feature\Transfer;
 
 use App\Data\UserData;
 use App\Exceptions\InsufficientFundsException;
-use App\Mappers\UserDataMapper;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepository;
 use App\Services\Transfer\TransferProcessor;
@@ -19,21 +18,15 @@ class TransferProcessorIntegrationTest extends TestCase
 
     protected TransferProcessor $transferProcessor;
     protected TransferRepository $transferRepository;
-    protected BalanceValidator $balanceValidator;
-    protected UserDataMapper $userDataMapper;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->transferRepository = new TransferRepository();
-        $this->balanceValidator = new BalanceValidator();
-        $this->userDataMapper = new UserDataMapper();
 
         $this->transferProcessor = new TransferProcessor(
             DB::getFacadeRoot(),
             $this->transferRepository,
-            $this->balanceValidator,
-            $this->userDataMapper
         );
     }
 
@@ -68,29 +61,6 @@ class TransferProcessorIntegrationTest extends TestCase
             'payer' => $payer->id,
             'payee' => $recipient->id,
             'value' => $amount,
-        ]);
-    }
-
-    public function testProcessThrowsInsufficientFundsException()
-    {
-        $payer = User::factory()->create(['balance' => 100]);
-        $recipient = User::factory()->create(['balance' => 100]);
-
-        $payerData = new UserData(
-            id: $payer->id,
-            user_type: $payer->user_type,
-            balance: $payer->balance
-        );
-
-        $this->expectException(InsufficientFundsException::class);
-
-        $this->transferProcessor->process($payerData, $recipient, 200);
-
-        $this->assertEquals(100, $payer->fresh()->balance);
-        $this->assertEquals(100, $recipient->fresh()->balance);
-        $this->assertDatabaseMissing('transfers', [
-            'payer' => $payer->id,
-            'payee' => $recipient->id,
         ]);
     }
 }

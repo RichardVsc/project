@@ -5,7 +5,6 @@ namespace Tests\Unit\Transfer;
 use App\Data\UserData;
 use App\Exceptions\InsufficientFundsException;
 use App\Exceptions\Transfer\TransferProcessException;
-use App\Mappers\UserDataMapper;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
 use App\Services\Transfer\TransferProcessor;
@@ -20,8 +19,6 @@ class TransferProcessorTest extends TestCase
     protected $connectionMock;
     protected $transferRepositoryMock;
     protected $transferProcessor;
-    protected $balanceValidatorMock;
-    protected $userDataMapperMock;
 
     protected function setUp(): void
     {
@@ -29,14 +26,12 @@ class TransferProcessorTest extends TestCase
         $this->databaseMock = Mockery::mock(DatabaseManager::class);
         $this->connectionMock = Mockery::mock();
         $this->transferRepositoryMock = Mockery::mock(TransferRepositoryInterface::class);
-        $this->balanceValidatorMock = Mockery::mock(BalanceValidator::class);
-        $this->userDataMapperMock = Mockery::mock(UserDataMapper::class);
 
         $this->databaseMock
             ->shouldReceive('connection')
             ->andReturn($this->connectionMock);
 
-        $this->transferProcessor = new TransferProcessor($this->databaseMock, $this->transferRepositoryMock, $this->balanceValidatorMock, $this->userDataMapperMock);
+        $this->transferProcessor = new TransferProcessor($this->databaseMock, $this->transferRepositoryMock);
     }
 
     public function tearDown(): void
@@ -90,62 +85,9 @@ class TransferProcessorTest extends TestCase
                 'value' => $amount,
             ]);
 
-        $this->userDataMapperMock
-            ->shouldReceive('fromModel')
-            ->with($payer)
-            ->andReturn($payerDto);
-
-        $this->balanceValidatorMock
-            ->shouldReceive('validate')
-            ->once()
-            ->with($payerDto, $amount);
-
         $this->transferProcessor->process($payerDto, $recipient, $amount);
 
         $this->assertTrue(true);
-    }
-
-    public function testProcessThrowsInsufficientFundsException()
-    {
-        $payerDto = new UserData(id: 1, user_type: 'common', balance: 10);
-        $amount = 50.0;
-
-        $payer = Mockery::mock(User::class)->makePartial();
-        $payer->id = 1;
-        $payer->balance = 10;
-
-        $recipient = Mockery::mock(User::class)->makePartial();
-        $recipient->id = 2;
-        $recipient->balance = 100;
-
-        $this->connectionMock->shouldReceive('beginTransaction')->once();
-        $this->connectionMock->shouldReceive('rollBack')->once();
-
-        $this->transferRepositoryMock
-            ->shouldReceive('findAndLockUserById')
-            ->with($payerDto->id)
-            ->andReturn($payer);
-
-        $this->transferRepositoryMock
-            ->shouldReceive('findAndLockUserById')
-            ->with($recipient->id)
-            ->andReturn($recipient);
-
-        $this->userDataMapperMock
-            ->shouldReceive('fromModel')
-            ->with($payer)
-            ->andReturn($payerDto);
-
-        $this->balanceValidatorMock
-            ->shouldReceive('validate')
-            ->with($payerDto, $amount)
-            ->once()
-            ->andThrow(new InsufficientFundsException('Saldo insuficiente.'));
-
-        $this->expectException(InsufficientFundsException::class);
-        $this->expectExceptionMessage('Saldo insuficiente.');
-
-        $this->transferProcessor->process($payerDto, $recipient, $amount);
     }
 
     public function testProcessThrowsTransferProcessExceptionOnGenericError()

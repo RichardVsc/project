@@ -5,18 +5,14 @@ namespace App\Services\Transfer;
 use App\Data\UserData;
 use App\Exceptions\InsufficientFundsException;
 use App\Exceptions\Transfer\TransferProcessException;
-use App\Mappers\UserDataMapper;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
-use App\Validators\Transfer\BalanceValidator;
 use Illuminate\Database\DatabaseManager;
 
 class TransferProcessor
 {
     protected DatabaseManager $database;
     protected TransferRepositoryInterface $transferRepository;
-    protected BalanceValidator $balanceValidator;
-    protected UserDataMapper $userDataMapper;
 
     /**
      * TransferService constructor.
@@ -27,13 +23,9 @@ class TransferProcessor
     public function __construct(
         DatabaseManager $database,
         TransferRepositoryInterface $transferRepository,
-        BalanceValidator $balanceValidator,
-        UserDataMapper $userDataMapper,
     ) {
         $this->database = $database;
         $this->transferRepository = $transferRepository;
-        $this->balanceValidator = $balanceValidator;
-        $this->userDataMapper = $userDataMapper;
     }
 
     /**
@@ -58,9 +50,6 @@ class TransferProcessor
         try {
             $payer = $this->transferRepository->findAndLockUserById($payer->id);
             $recipient = $this->transferRepository->findAndLockUserById($recipient->id);
-
-            $payerData = $this->userDataMapper->fromModel($payer);
-            $this->balanceValidator->validate($payerData, $amount);
 
             $this->transferRepository->debitUser($payer, $amount);
             $this->transferRepository->creditUser($recipient, $amount);

@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Mappers\UserDataMapper;
 use App\Repositories\Statement\StatementRepository;
 use App\Repositories\Statement\StatementRepositoryInterface;
 use App\Repositories\Transfer\TransferRepository;
@@ -30,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
             return new TransferService(
                 new TransferOrchestrator(
                     new TransferValidator(new AuthorizationService(), new PayerTypeValidator(), new BalanceValidator()),
-                    new TransferProcessor($app['db'], $app->make(TransferRepositoryInterface::class), new BalanceValidator(), new UserDataMapper()),
+                    new TransferProcessor($app['db'], $app->make(TransferRepositoryInterface::class)),
                     new RecipientResolver($app->make(TransferRepositoryInterface::class)),
                     $app->make(TransferRepositoryInterface::class)
                 )
