@@ -7,6 +7,7 @@ use App\Events\TransactionCreated;
 use App\Exceptions\Authorization\AuthorizationDeniedException;
 use App\Exceptions\InsufficientFundsException;
 use App\Exceptions\RecipientNotFoundException;
+use App\Mappers\UserDataMapper;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepository;
 use App\Services\Authorization\AuthorizationService;
@@ -32,9 +33,11 @@ class TransferOrchestratorIntegrationTest extends TestCase
         parent::setUp();
 
         $repository = new TransferRepository();
+        $balanceValidator = new BalanceValidator();
+        $userDataMapper = new UserDataMapper();
         $database = app('db');
         $transferValidator = new TransferValidator(new AuthorizationService(), new PayerTypeValidator(), new BalanceValidator());
-        $transferProcessor = new TransferProcessor($database, $repository);
+        $transferProcessor = new TransferProcessor($database, $repository, $balanceValidator, $userDataMapper);
         $recipientResolver = new RecipientResolver($repository);
 
         $this->orchestrator = new TransferOrchestrator(
@@ -57,9 +60,11 @@ class TransferOrchestratorIntegrationTest extends TestCase
         $this->app->instance(AuthorizationService::class, $authService);
 
         $repository = new TransferRepository();
+        $balanceValidator = new BalanceValidator();
+        $userDataMapper = new UserDataMapper();
         $database = app('db');
         $transferValidator = new TransferValidator($authService, new PayerTypeValidator(), new BalanceValidator());
-        $transferProcessor = new TransferProcessor($database, $repository);
+        $transferProcessor = new TransferProcessor($database, $repository, $balanceValidator, $userDataMapper);
         $recipientResolver = new RecipientResolver($repository);
 
         $orchestrator = new TransferOrchestrator(
@@ -147,9 +152,11 @@ class TransferOrchestratorIntegrationTest extends TestCase
         $this->app->instance(AuthorizationService::class, $authService);
 
         $repository = new TransferRepository();
+        $balanceValidator = new BalanceValidator();
+        $userDataMapper = new UserDataMapper();
         $database = app('db');
         $transferValidator = new TransferValidator($authService, new PayerTypeValidator(), new BalanceValidator());
-        $transferProcessor = new TransferProcessor($database, $repository);
+        $transferProcessor = new TransferProcessor($database, $repository, $balanceValidator, $userDataMapper);
         $recipientResolver = new RecipientResolver($repository);
 
         $orchestrator = new TransferOrchestrator(

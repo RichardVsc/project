@@ -58,4 +58,32 @@ interface TransferRepositoryInterface
      * @return User
      */
     public function findAndLockUserById(int $id): User;
+
+    /**
+     * Debit a specified amount from the user's balance.
+     *
+     * This method checks if the user has sufficient balance. If not,
+     * it throws an InsufficientFundsException. Upon successful validation,
+     * it deducts the amount from the user's balance and persists the change.
+     *
+     * @param User $user  The user whose balance will be debited.
+     * @param float $amount  The amount to be debited.
+     * 
+     * 
+     * @return User  The updated User instance with the new balance.
+     */
+    public function debitUser(User $user, float $amount): User;
+
+    /**
+     * Credit a specified amount to the user's balance.
+     *
+     * This method increases the user's balance by the given amount
+     * and persists the change to the database.
+     *
+     * @param User $user  The user whose balance will be credited.
+     * @param float $amount  The amount to be credited.
+     * 
+     * @return User  The updated User instance with the new balance.
+     */
+    public function creditUser(User $user, float $amount): User;
 }

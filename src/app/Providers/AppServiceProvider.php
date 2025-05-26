@@ -12,9 +12,10 @@ use App\Services\Transfer\TransferOrchestrator;
 use App\Services\Transfer\TransferProcessor;
 use App\Services\Transfer\TransferService;
 use App\Services\Transfer\TransferValidator;
-use App\Validators\Transfer\BalanceValidator as TransferBalanceValidator;
-use App\Validators\Transfer\PayerTypeValidator as TransferPayerTypeValidator;
+use App\Validators\Transfer\BalanceValidator;
+use App\Validators\Transfer\PayerTypeValidator;
 use Illuminate\Support\ServiceProvider;
+use App\Mappers\UserDataMapper;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,8 +29,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TransferService::class, function ($app) {
             return new TransferService(
                 new TransferOrchestrator(
-                    new TransferValidator(new AuthorizationService(), new TransferPayerTypeValidator(), new TransferBalanceValidator()),
-                    new TransferProcessor($app['db'], $app->make(TransferRepositoryInterface::class)),
+                    new TransferValidator(new AuthorizationService(), new PayerTypeValidator(), new BalanceValidator()),
+                    new TransferProcessor($app['db'], $app->make(TransferRepositoryInterface::class), new BalanceValidator(), new UserDataMapper()),
                     new RecipientResolver($app->make(TransferRepositoryInterface::class)),
                     $app->make(TransferRepositoryInterface::class)
                 )

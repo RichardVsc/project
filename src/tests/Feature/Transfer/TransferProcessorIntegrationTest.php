@@ -4,9 +4,11 @@ namespace Tests\Feature\Transfer;
 
 use App\Data\UserData;
 use App\Exceptions\InsufficientFundsException;
+use App\Mappers\UserDataMapper;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepository;
 use App\Services\Transfer\TransferProcessor;
+use App\Validators\Transfer\BalanceValidator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -17,15 +19,21 @@ class TransferProcessorIntegrationTest extends TestCase
 
     protected TransferProcessor $transferProcessor;
     protected TransferRepository $transferRepository;
+    protected BalanceValidator $balanceValidator;
+    protected UserDataMapper $userDataMapper;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->transferRepository = new TransferRepository();
+        $this->balanceValidator = new BalanceValidator();
+        $this->userDataMapper = new UserDataMapper();
 
         $this->transferProcessor = new TransferProcessor(
             DB::getFacadeRoot(),
             $this->transferRepository,
+            $this->balanceValidator,
+            $this->userDataMapper
         );
     }
 
