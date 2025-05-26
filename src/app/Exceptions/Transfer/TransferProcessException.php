@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Exceptions;
+namespace App\Exceptions\Transfer;
 
 use Exception;
 
-class TransferLockException extends Exception
+class TransferProcessException extends Exception
 {
     /**
      * Render the exception as an HTTP response.
@@ -14,6 +14,6 @@ class TransferLockException extends Exception
         return response()->json([
             'status' => 'error',
             'message' => $this->getMessage(),
-        ], $this->getCode() ?: 429);
+        ], $this->getCode() ?: 500);
     }
 }

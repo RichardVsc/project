@@ -4,7 +4,7 @@ namespace App\Services\Transfer;
 
 use App\Data\UserData;
 use App\Exceptions\InsufficientFundsException;
-use App\Exceptions\TransferProcessException;
+use App\Exceptions\Transfer\TransferProcessException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
 use Illuminate\Database\DatabaseManager;

@@ -4,7 +4,7 @@ namespace Tests\Unit\Transfer;
 
 use App\Data\UserData;
 use App\Exceptions\InsufficientFundsException;
-use App\Exceptions\TransferProcessException;
+use App\Exceptions\Transfer\TransferProcessException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
 use App\Services\Transfer\TransferProcessor;

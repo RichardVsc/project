@@ -2,7 +2,7 @@
 
 namespace App\Jobs\Notification;
 
-use App\Exceptions\NotificationFailedException;
+use App\Exceptions\Notification\NotificationFailedException;
 use App\Models\Notification;
 use Exception;
 use Illuminate\Bus\Queueable;

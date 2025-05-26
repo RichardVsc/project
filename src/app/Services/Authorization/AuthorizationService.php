@@ -2,8 +2,8 @@
 
 namespace App\Services\Authorization;
 
-use App\Exceptions\AuthorizationDeniedException;
-use App\Exceptions\AuthorizationServiceException;
+use App\Exceptions\Authorization\AuthorizationDeniedException;
+use App\Exceptions\Authorization\AuthorizationServiceException;
 use Illuminate\Support\Facades\Http;
 
 class AuthorizationService

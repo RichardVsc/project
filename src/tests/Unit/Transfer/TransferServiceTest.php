@@ -3,12 +3,12 @@
 namespace Tests\Unit\Transfer;
 
 use App\Data\TransferRequestData;
-use App\Exceptions\AuthorizationDeniedException;
-use App\Exceptions\AuthorizationServiceException;
+use App\Exceptions\Authorization\AuthorizationDeniedException;
+use App\Exceptions\Authorization\AuthorizationServiceException;
 use App\Exceptions\InsufficientFundsException;
 use App\Exceptions\RecipientNotFoundException;
-use App\Exceptions\TransferException;
-use App\Exceptions\TransferProcessException;
+use App\Exceptions\Transfer\TransferException;
+use App\Exceptions\Transfer\TransferProcessException;
 use App\Services\Transfer\TransferOrchestrator;
 use App\Services\Transfer\TransferService;
 use Mockery;

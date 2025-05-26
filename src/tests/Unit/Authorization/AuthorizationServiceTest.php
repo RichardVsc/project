@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Authorization;
 
-use App\Exceptions\AuthorizationDeniedException;
-use App\Exceptions\AuthorizationServiceException;
+use App\Exceptions\Authorization\AuthorizationDeniedException;
+use App\Exceptions\Authorization\AuthorizationServiceException;
 use App\Services\Authorization\AuthorizationService;
 use Illuminate\Support\Facades\Http;
 use Mockery;

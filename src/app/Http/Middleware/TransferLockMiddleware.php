@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Exceptions\TransferLockException;
+use App\Exceptions\Transfer\TransferLockException;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
