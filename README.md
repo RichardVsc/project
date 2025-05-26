@@ -71,7 +71,7 @@ composer install
 cp .env.example .env
 ```
 
-6. Atualize as configurações do banco de dados para usar o PostgreSQL definido no `docker-compose.yml`
+6. Atualize as configurações do banco de dados dentro do seu arquivo `.env` para usar o PostgreSQL definido no `docker-compose.yml`
 
 ```bash 
 DB_CONNECTION=pgsql
