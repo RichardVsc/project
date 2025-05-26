@@ -3,11 +3,9 @@
 namespace Tests\Feature\Transfer;
 
 use App\Data\UserData;
-use App\Exceptions\InsufficientFundsException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepository;
 use App\Services\Transfer\TransferProcessor;
-use App\Validators\Transfer\BalanceValidator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;

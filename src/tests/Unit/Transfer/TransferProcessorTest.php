@@ -3,12 +3,10 @@
 namespace Tests\Unit\Transfer;
 
 use App\Data\UserData;
-use App\Exceptions\InsufficientFundsException;
 use App\Exceptions\Transfer\TransferProcessException;
 use App\Models\User;
 use App\Repositories\Transfer\TransferRepositoryInterface;
 use App\Services\Transfer\TransferProcessor;
-use App\Validators\Transfer\BalanceValidator;
 use Illuminate\Database\DatabaseManager;
 use Mockery;
 use Tests\TestCase;
