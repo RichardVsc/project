@@ -6,9 +6,9 @@ class TransferRequestData
 {
     public int $payerId;
     public int $recipientId;
-    public float $amount;
+    public int $amount;
 
-    public function __construct(int $payerId, int $recipientId, float $amount)
+    public function __construct(int $payerId, int $recipientId, int $amount)
     {
         $this->payerId = $payerId;
         $this->recipientId = $recipientId;

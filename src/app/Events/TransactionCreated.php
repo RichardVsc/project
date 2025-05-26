@@ -14,16 +14,16 @@ class TransactionCreated
 
     public int $payerId;
     public int $recipientId;
-    public float $amount;
+    public int $amount;
 
     /**
      * Create a new event instance.
      *
      * @param int $payerId
      * @param int $recipientId
-     * @param float $amount
+     * @param int $amount
      */
-    public function __construct(int $payerId, int $recipientId, float $amount)
+    public function __construct(int $payerId, int $recipientId, int $amount)
     {
         $this->payerId = $payerId;
         $this->recipientId = $recipientId;

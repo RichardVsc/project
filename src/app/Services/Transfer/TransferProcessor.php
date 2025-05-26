@@ -45,12 +45,12 @@ class TransferProcessor
      *
      * @param UserData $payer The user initiating the transfer.
      * @param User $recipient The user receiving the transfer.
-     * @param float $amount The amount to be transferred.
+     * @param int $amount The amount to be transferred.
      * @return void
      * @throws InsufficientFundsException If the user doesnt have enough funds.
      * @throws TransferProcessException If the transfer fails.
      */
-    public function process(UserData $payer, User $recipient, float $amount): void
+    public function process(UserData $payer, User $recipient, int $amount): void
     {
         $connection = $this->database->connection();
         $connection->beginTransaction();

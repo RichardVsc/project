@@ -26,8 +26,8 @@ class TransferValidator
     /**
      * Validates the payer's type, balance, and third-party authorization.
      *
-     * @throws \App\Exceptions\AuthorizationDeniedException
-     * @throws \App\Exceptions\AuthorizationServiceException
+     * @throws \App\Exceptions\Authorization\AuthorizationDeniedException
+     * @throws \App\Exceptions\Authorization\AuthorizationServiceException
      * @throws \App\Exceptions\InsufficientFundsException
      * @throws \App\Exceptions\MerchantCannotTransferException
      */

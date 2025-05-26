@@ -62,8 +62,8 @@ class TransferOrchestratorTest extends TestCase
     {
         Event::fake();
 
-        $data = new TransferRequestData(payerId: 1, recipientId: 2, amount: 100.0);
-        $payer = new UserData(id: 1, user_type: 'common', balance: 200.0);
+        $data = new TransferRequestData(payerId: 1, recipientId: 2, amount: 100);
+        $payer = new UserData(id: 1, user_type: 'common', balance: 100);
         $recipient = Mockery::mock(User::class)->makePartial();
         $recipient->id = 2;
 

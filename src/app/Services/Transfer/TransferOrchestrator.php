@@ -46,10 +46,10 @@ class TransferOrchestrator
      * @return void
      *
      * @throws \App\Exceptions\InsufficientFundsException
-     * @throws \App\Exceptions\AuthorizationDeniedException
-     * @throws \App\Exceptions\AuthorizationServiceException
+     * @throws \App\Exceptions\Authorization\AuthorizationDeniedException
+     * @throws \App\Exceptions\Authorization\AuthorizationServiceException
      * @throws \App\Exceptions\RecipientNotFoundException
-     * @throws \App\Exceptions\TransferProcessException
+     * @throws \App\Exceptions\Transfer\TransferProcessException
      * @throws \App\Exceptions\MerchantCannotTransferException
      */
     public function orchestrate(TransferRequestData $data): void
