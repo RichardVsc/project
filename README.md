@@ -1,6 +1,6 @@
 # Projeto de Plataforma de Pagamentos Simplificada
 
-Este projeto é uma plataforma de pagamentos que permite transferências de dinheiro entre usuários e lojistas.  
+Este projeto é uma plataforma de pagamentos simplificada, desenvolvida em Laravel, que permite transferências seguras entre usuários e lojistas. Conta com um sistema robusto de validações, controle de concorrência via Redis e envio de notificações.
 
 ## 🧑‍💻 Tecnologias Utilizadas
 - **Laravel 12**
@@ -65,21 +65,52 @@ docker exec -it project bash
 composer install
 ```
 
-5. Execute as migrations e os seeders:
+5. Copie o arquivo `.env.example` para `.env`:
+
+```bash
+cp .env.example .env
+```
+
+6. Atualize as configurações do banco de dados para usar o PostgreSQL definido no `docker-compose.yml`
+
+```bash 
+DB_CONNECTION=pgsql
+DB_HOST=db
+DB_PORT=5432
+DB_DATABASE=laravel_db
+DB_USERNAME=laravel
+DB_PASSWORD=secret
+```
+
+7. Gere a chave da aplicação:
+```bash
+php artisan key:generate
+```
+
+8. Execute as migrations e os seeders:
 ```bash
 php artisan migrate
 php artisan db:seed --class=UserSeeder
 ```
-6. Acesse a aplicação no navegador:
+9. Acesse a aplicação no navegador:
 ```bash
 http://localhost:8080
 ```
 
-7. Para verificar os usuários criados via seeder, use o Tinker:
+10. Para verificar os usuários criados via seeder, use o Tinker:
 ```bash
 php artisan tinker
 App\Models\User::all();
 ```
+
+## 📚 Endpoints Disponíveis
+
+| Método | Endpoint          | Descrição                          |
+|--------|-------------------|-------------------------------------|
+| POST   | /api/transfer     | Realiza uma transferência          |
+
+> 🔐 Todos os endpoints são protegidos via token Bearer (Sanctum).
+---
 
 ## 🧪 Testes e Análise de Código
 
@@ -121,43 +152,42 @@ Você pode testar a rota de transferência da API usando ferramentas como cURL o
    ```json
       {
          "status": "error",
-         "message": "Transação não autorizada pelo serviço externo.",
-         "new_balance": 9500
+         "message": "Transação não autorizada pelo serviço externo."
       }  
    ```
    - Usuário do tipo lojista não pode transferir
    ```json
       {
          "status": "error",
-         "message": "Lojistas não podem realizar transferências.",
+         "message": "Lojistas não podem realizar transferências."
       }  
    ```
    - Saldo insuficiente
    ```json
       {
          "status": "error",
-         "message": "Saldo insuficiente.",
+         "message": "Saldo insuficiente."
       }  
    ```
    - Destinatário não encontrado
    ```json
       {
          "status": "error",
-         "message": "Destinatário da transação não encontrado.",
+         "message": "Destinatário da transação não encontrado."
       }  
    ```
    - Serviço de autorização indisponível
    ```json
       {
          "status": "error",
-         "message": "Erro ao consultar serviço autorizador.",
+         "message": "Erro ao consultar serviço autorizador."
       }  
    ```
    - Erro interno durante a transferência
    ```json
       {
          "status": "error",
-         "message": "Erro ao processar a transferência.",
+         "message": "Erro ao processar a transferência."
       }  
    ```
 
